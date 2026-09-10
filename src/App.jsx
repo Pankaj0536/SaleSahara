@@ -20,6 +20,8 @@ import { ImportDataScreen } from './components/Screens/ImportDataScreen';
 import { AddLeadModal } from './components/Screens/AddLeadModal';
 import { AIAssistantDrawer } from './components/Screens/AIAssistantDrawer';
 import { SettingsScreen } from './components/Screens/SettingsScreen';
+import { SalespersonComparisonScreen } from './components/Screens/SalespersonComparisonScreen';
+import { CustomerRetentionScreen } from './components/Screens/CustomerRetentionScreen';
 
 export default function App() {
   // Navigation view: 'landing' | 'login' | 'app'
@@ -197,6 +199,18 @@ export default function App() {
                 Use the floating AI Assistant widget at the bottom right to query lead scores, run simulations, or filter pipeline accounts.
               </p>
             </div>
+          )}
+
+          {currentScreen === 'salesperson-comparison' && (
+            <SalespersonComparisonScreen
+              onTriggerAction={handleTriggerAction}
+            />
+          )}
+
+          {currentScreen === 'customer-retention' && (
+            <CustomerRetentionScreen
+              onTriggerAction={handleTriggerAction}
+            />
           )}
 
           {currentScreen === 'settings' && (

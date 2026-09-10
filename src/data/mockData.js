@@ -338,3 +338,215 @@ export const NOTIFICATIONS_LIST = [
   { id: "n3", title: "Pipeline Risk Notice", message: "3 leads are becoming at risk due to lack of response.", time: "3h ago", read: true, type: "risk" },
   { id: "n4", title: "Model Intelligence", message: "Model retraining recommended after receiving 50 new converted leads.", time: "1d ago", read: true, type: "info" }
 ];
+
+// 1. Salesperson Performance & Comparison Mock Data
+export const SALESPERSON_DATA = [
+  {
+    id: "rep-1",
+    name: "Harsh Vardhan",
+    role: "Senior Enterprise AE",
+    avatar: "H",
+    assignedLeads: 48,
+    convertedDeals: 38,
+    winRate: 79.2,
+    revenue: "$680,000",
+    avgDealCycle: "11.4 days",
+    avgDealSize: "$17,894",
+    aiCompliance: 96.2,
+    status: "Top Performer",
+    monthlyTrend: [65, 70, 74, 78, 82, 88],
+    insights: "Adheres to AI recommended next best action within 1.5h of lead scoring signal."
+  },
+  {
+    id: "rep-2",
+    name: "Priya Nair",
+    role: "Account Executive",
+    avatar: "P",
+    assignedLeads: 42,
+    convertedDeals: 31,
+    winRate: 73.8,
+    revenue: "$520,000",
+    avgDealCycle: "14.2 days",
+    avgDealSize: "$16,774",
+    aiCompliance: 92.4,
+    status: "On Track",
+    monthlyTrend: [58, 62, 68, 70, 72, 74],
+    insights: "High conversion efficiency on Partner Referral leads."
+  },
+  {
+    id: "rep-3",
+    name: "Rohan Gupta",
+    role: "Sales Development Rep",
+    avatar: "R",
+    assignedLeads: 54,
+    convertedDeals: 34,
+    winRate: 63.0,
+    revenue: "$410,000",
+    avgDealCycle: "16.8 days",
+    avgDealSize: "$12,058",
+    aiCompliance: 88.0,
+    status: "On Track",
+    monthlyTrend: [50, 54, 58, 60, 62, 63],
+    insights: "Win rate increases by +28.4% when adhering to AI call timing recommendations."
+  },
+  {
+    id: "rep-4",
+    name: "Ananya Sen",
+    role: "Enterprise AE",
+    avatar: "A",
+    assignedLeads: 38,
+    convertedDeals: 28,
+    winRate: 73.7,
+    revenue: "$490,000",
+    avgDealCycle: "13.5 days",
+    avgDealSize: "$17,500",
+    aiCompliance: 94.0,
+    status: "Top Performer",
+    monthlyTrend: [60, 64, 68, 71, 73, 74],
+    insights: "Consistently closes high-budget enterprise accounts with >85% AI score."
+  },
+  {
+    id: "rep-5",
+    name: "Vikram Malhotra",
+    role: "Junior AE",
+    avatar: "V",
+    assignedLeads: 40,
+    convertedDeals: 20,
+    winRate: 50.0,
+    revenue: "$310,000",
+    avgDealCycle: "21.0 days",
+    avgDealSize: "$15,500",
+    aiCompliance: 76.5,
+    status: "Needs Coaching",
+    monthlyTrend: [40, 42, 45, 47, 49, 50],
+    insights: "Delayed follow-up response on high-priority leads is impacting close speed."
+  }
+];
+
+// 2. Old Customer Retention & Churn Intelligence Mock Data
+export const RETENTION_DATA = {
+  overallRetentionRate: 92.4,
+  nrr: 118.2,
+  atRiskAccountsCount: 14,
+  atRiskArrValue: "$420,000",
+  renewalsDueArrValue: "$1,840,000",
+  accounts: [
+    {
+      id: "acc-1",
+      name: "TechNova Technologies",
+      industry: "Enterprise SaaS",
+      seats: 120,
+      healthScore: 94,
+      churnRisk: 6,
+      status: "Healthy",
+      arr: "$75,000",
+      renewalDate: "15 Oct 2026",
+      aiRecommendedAction: "Offer Enterprise Expansion Module",
+      aiReason: "High daily active user adoption (94%) + 18 API integrations triggered.",
+      positiveDrivers: [
+        "Executive QBR completed with 95% satisfaction score",
+        "API integration frequency increased +34% MoM",
+        "Zero critical support escalation tickets in past 90 days"
+      ],
+      riskFactors: []
+    },
+    {
+      id: "acc-2",
+      name: "FinServe Global",
+      industry: "Financial Services",
+      seats: 180,
+      healthScore: 88,
+      churnRisk: 12,
+      status: "Healthy",
+      arr: "$120,000",
+      renewalDate: "28 Nov 2026",
+      aiRecommendedAction: "Conduct Executive Sponsor Check-in",
+      aiReason: "Procurement invoice renewal is pending final C-suite signoff.",
+      positiveDrivers: [
+        "Added 35 new user seats in Q2",
+        "Strong team engagement on AI recommendation queue"
+      ],
+      riskFactors: [
+        "Internal procurement processing delay (SLA +5 days)"
+      ]
+    },
+    {
+      id: "acc-3",
+      name: "CloudScale Systems",
+      industry: "Cloud Infrastructure",
+      seats: 85,
+      healthScore: 72,
+      churnRisk: 28,
+      status: "Renewal Pending",
+      arr: "$60,000",
+      renewalDate: "30 Sep 2026",
+      aiRecommendedAction: "Schedule Renewal QBR & Lock Multi-Year Discount",
+      aiReason: "Key internal champion transferred to another division.",
+      positiveDrivers: [
+        "Core engineering team uses lead scoring API daily"
+      ],
+      riskFactors: [
+        "Executive sponsor role transition in progress",
+        "Competitor contract evaluation initiated"
+      ]
+    },
+    {
+      id: "acc-4",
+      name: "BioHealth Diagnostics",
+      industry: "Healthcare & Biotech",
+      seats: 60,
+      healthScore: 64,
+      churnRisk: 36,
+      status: "Expansion Opportunity",
+      arr: "$40,000",
+      renewalDate: "12 Dec 2026",
+      aiRecommendedAction: "Pitch Healthcare Compliance Add-on Module",
+      aiReason: "High demand for HIPAA audit log reporting feature.",
+      positiveDrivers: [
+        "Requested specialized HIPAA compliance feature upgrade"
+      ],
+      riskFactors: [
+        "Under-utilized license allocation (42/60 seats active)"
+      ]
+    },
+    {
+      id: "acc-5",
+      name: "Apex Logistics",
+      industry: "Logistics & Supply Chain",
+      seats: 95,
+      healthScore: 42,
+      churnRisk: 58,
+      status: "At Risk",
+      arr: "$50,000",
+      renewalDate: "20 Oct 2026",
+      aiRecommendedAction: "Deploy CS Task Force Immediately",
+      aiReason: "User login activity dropped by 45% over past 30 days.",
+      positiveDrivers: [
+        "Signed 2-year service contract with locked tier pricing"
+      ],
+      riskFactors: [
+        "User activity decreased 45% in past month",
+        "1 open unresolved priority P1 support ticket",
+        "No executive response to last 2 monthly check-in emails"
+      ]
+    },
+    {
+      id: "acc-6",
+      name: "CyberGuard Defense",
+      industry: "Cybersecurity",
+      seats: 140,
+      healthScore: 96,
+      churnRisk: 4,
+      status: "Healthy",
+      arr: "$90,000",
+      renewalDate: "18 Jan 2027",
+      aiRecommendedAction: "Lock 3-Year Contract Renewal with 10% Loyalty Rebate",
+      aiReason: "99% feature adoption score + executive endorsement from CRO.",
+      positiveDrivers: [
+        "99% feature adoption across sales operations team",
+        "CRO requested case study co-marketing presentation"
+      ],
+      riskFactors: []
+    }
+  ]
+};

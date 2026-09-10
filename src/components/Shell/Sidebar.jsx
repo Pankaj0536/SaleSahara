@@ -11,7 +11,9 @@ import {
   Settings,
   LogOut,
   X,
-  TrendingUp
+  TrendingUp,
+  Award,
+  ShieldCheck
 } from 'lucide-react';
 
 export const Sidebar = ({ currentScreen, onNavigate, onLogout, isOpenMobile, onCloseMobile }) => {
@@ -19,6 +21,8 @@ export const Sidebar = ({ currentScreen, onNavigate, onLogout, isOpenMobile, onC
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'leads', label: 'Leads', icon: Users, badge: '186' },
     { id: 'recommendations', label: 'AI Recommendations', icon: Sparkles, highlight: true },
+    { id: 'salesperson-comparison', label: 'Sales Rep Comparison', icon: Award, isNew: true },
+    { id: 'customer-retention', label: 'Customer Retention', icon: ShieldCheck, badge: '92.4%' },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'data-quality', label: 'Data Quality', icon: CheckCircle, badge: '87%' },
     { id: 'model-intelligence', label: 'Model Intelligence', icon: BrainCircuit, badge: 'Healthy' },
