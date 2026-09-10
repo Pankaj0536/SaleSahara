@@ -27,7 +27,7 @@ export const LoginScreen = ({ onLoginSuccess, onBackToLanding }) => {
     <div style={{
       minHeight: '100vh',
       width: '100vw',
-      background: 'radial-gradient(ellipse at top, var(--bg-dark) 0%, var(--bg-surface-hover) 100%)',
+      background: 'transparent',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
