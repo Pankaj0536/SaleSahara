@@ -39,16 +39,17 @@ export const LandingPage = ({ onLoginSuccess, onOpenLoginScreen }) => {
   };
 
   return (
-    <div style={{ background: 'var(--bg-dark)', color: 'var(--text-main)', minHeight: '100vh', overflowX: 'hidden' }}>
+    <div style={{ background: 'transparent', color: 'var(--text-main)', minHeight: '100vh', overflowX: 'hidden' }}>
 
       {/* 1. TOP MARKETING NAVBAR */}
       <header style={{
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        background: 'var(--bg-surface)',
-        borderBottom: '1px solid var(--border-subtle)',
-        backdropFilter: 'blur(12px)',
+        background: 'rgba(10, 16, 26, 0.68)',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
         padding: '0.9rem 2rem',
         display: 'flex',
         alignItems: 'center',

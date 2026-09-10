@@ -20,16 +20,16 @@ export const ScoreRing = ({ percentage = 91, priority = "VERY HIGH", confidence 
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
           <defs>
             <linearGradient id="score-gradient-veryhigh" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#ef4444" />
-              <stop offset="100%" stopColor="#f97316" />
+              <stop offset="0%" stopColor="#69f0ee" />
+              <stop offset="100%" stopColor="#34a6cb" />
             </linearGradient>
             <linearGradient id="score-gradient-high" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#f97316" />
-              <stop offset="100%" stopColor="#eab308" />
+              <stop offset="0%" stopColor="#34a6cb" />
+              <stop offset="100%" stopColor="#0284c7" />
             </linearGradient>
             <linearGradient id="score-gradient-medium" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#4f46e5" />
-              <stop offset="100%" stopColor="#0284c7" />
+              <stop offset="0%" stopColor="#38bdf8" />
+              <stop offset="100%" border="0" stopColor="#818cf8" />
             </linearGradient>
             <linearGradient id="score-gradient-low" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stopColor="#64748b" />
@@ -42,12 +42,12 @@ export const ScoreRing = ({ percentage = 91, priority = "VERY HIGH", confidence 
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="var(--border-medium)"
+            stroke="rgba(255, 255, 255, 0.08)"
             strokeWidth={strokeWidth}
             fill="transparent"
           />
           
-          {/* Animated Progress Ring */}
+          {/* Animated Progress Ring with Cyan Illumination */}
           <circle
             cx={size / 2}
             cy={size / 2}
@@ -61,12 +61,13 @@ export const ScoreRing = ({ percentage = 91, priority = "VERY HIGH", confidence 
             style={{
               transition: 'stroke-dashoffset 1s ease-in-out',
               transform: 'rotate(-90deg)',
-              transformOrigin: '50% 50%'
+              transformOrigin: '50% 50%',
+              filter: percentage >= 70 ? 'drop-shadow(0 0 8px rgba(105, 240, 238, 0.5))' : 'none'
             }}
           />
         </svg>
 
-        {/* Center Dominant Percentage Text */}
+        {/* Center Dominant Percentage Text with subtle cyan illumination */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -83,7 +84,8 @@ export const ScoreRing = ({ percentage = 91, priority = "VERY HIGH", confidence 
             fontSize: size > 140 ? '2.5rem' : '1.75rem',
             fontWeight: '800',
             letterSpacing: '-0.03em',
-            color: 'var(--text-main)',
+            color: '#ffffff',
+            textShadow: percentage >= 70 ? '0 0 16px rgba(105, 240, 238, 0.45)' : 'none',
             lineHeight: 1
           }}>
             {percentage}%
