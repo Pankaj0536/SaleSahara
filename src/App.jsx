@@ -190,17 +190,6 @@ export default function App() {
             />
           )}
 
-          {currentScreen === 'ai-assistant' && (
-            <div style={{ padding: '2rem' }}>
-              <h1 style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
-                AI Assistant Workspace
-              </h1>
-              <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                Use the floating AI Assistant widget at the bottom right to query lead scores, run simulations, or filter pipeline accounts.
-              </p>
-            </div>
-          )}
-
           {currentScreen === 'salesperson-comparison' && (
             <SalespersonComparisonScreen
               onTriggerAction={handleTriggerAction}
