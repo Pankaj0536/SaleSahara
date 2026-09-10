@@ -1,5 +1,8 @@
 # SaleSahara — AI Sales Intelligence & CRM Lead Conversion Intelligence Platform
 
+🌐 **Live Web Application (GitHub Pages):** [https://yogesh994501.github.io/SaleSahara/](https://yogesh994501.github.io/SaleSahara/)  
+🚀 **Target Repository Deployment:** `https://pankaj0536.github.io/SaleSahara/` *(Serves from `main/docs/`)*
+
 SaleSahara is an enterprise AI-powered sales intelligence platform that predicts CRM lead conversion probability, provides model explainability, computes Next Best Actions, tracks data quality & model health, and continually learns from actual sales outcomes.
 
 ---
