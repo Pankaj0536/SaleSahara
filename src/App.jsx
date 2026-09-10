@@ -22,7 +22,6 @@ import { AddLeadModal } from './components/Screens/AddLeadModal';
 import { AIAssistantDrawer } from './components/Screens/AIAssistantDrawer';
 import { AIAssistantScreen } from './components/Screens/AIAssistantScreen';
 import { SettingsScreen } from './components/Screens/SettingsScreen';
-import Aurora from './components/Backgrounds/Aurora';
 
 export default function App() {
   // Navigation view: 'landing' | 'login' | 'app'
@@ -265,22 +264,7 @@ export default function App() {
         />
       </div>
 
-      {/* Layer 2: Atmospheric Transparency Overlay */}
-      <div style={{
-        position: 'fixed',
-        inset: 0,
-        width: '100vw',
-        height: '100vh',
-        zIndex: 1,
-        pointerEvents: 'none',
-        background: isLight
-          ? 'radial-gradient(ellipse at 50% 20%, transparent 0%, rgba(255, 255, 255, 0.20) 100%)'
-          : 'radial-gradient(ellipse at 50% 30%, rgba(5, 6, 7, 0.55) 0%, rgba(5, 6, 7, 0.84) 100%)'
-      }} />
 
-      {/* Layer 3: Application Shell & Glassmorphic Surfaces */}
-      <div style={{ position: 'relative', zIndex: 10, minHeight: '100vh' }}>
-        {renderCurrentView()}
       </div>
 
       {/* Floating AI Assistant Panel & Trigger */}
