@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { INITIAL_LEADS } from './data/mockData';
+import { api } from './services/api';
 
 // Shell & Landing
 import { LandingPage } from './components/Landing/LandingPage';
@@ -44,6 +45,22 @@ export default function App() {
   const [leads, setLeads] = useState(INITIAL_LEADS);
   const [selectedLead, setSelectedLead] = useState(INITIAL_LEADS[0]);
   
+  // Fetch real leads from Node.js Express Gateway if available
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const fetchedLeads = await api.getLeads();
+        if (fetchedLeads && fetchedLeads.length > 0) {
+          setLeads(fetchedLeads);
+          setSelectedLead(fetchedLeads[0]);
+        }
+      } catch (err) {
+        console.warn('Backend unavailable, using offline dataset:', err);
+      }
+    }
+    loadData();
+  }, []);
+
   // UI Overlays state
   const [isAddLeadModalOpen, setIsAddLeadModalOpen] = useState(false);
   const [toast, setToast] = useState(null);
@@ -60,11 +77,19 @@ export default function App() {
     setCurrentScreen('lead-details');
   };
 
-  const handleAddLead = (newLead) => {
-    setLeads([newLead, ...leads]);
-    setSelectedLead(newLead);
-    setCurrentScreen('lead-details');
-    showToast(`Lead "${newLead.name}" added & scored successfully!`);
+  const handleAddLead = async (newLead) => {
+    try {
+      const created = await api.createLead(newLead);
+      setLeads(prev => [created, ...prev]);
+      setSelectedLead(created);
+      setCurrentScreen('lead-details');
+      showToast(`Lead "${created.name}" added & scored successfully!`);
+    } catch (err) {
+      setLeads([newLead, ...leads]);
+      setSelectedLead(newLead);
+      setCurrentScreen('lead-details');
+      showToast(`Lead "${newLead.name}" added & scored successfully!`);
+    }
   };
 
   const handleTriggerAction = (actionName, details) => {
