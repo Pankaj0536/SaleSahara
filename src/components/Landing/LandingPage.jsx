@@ -131,23 +131,6 @@ export const LandingPage = ({ onLoginSuccess, onOpenLoginScreen }) => {
           pointerEvents: 'none'
         }} />
 
-        {/* Badge */}
-        <div style={{
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: '0.5rem',
-          padding: '0.35rem 0.85rem',
-          borderRadius: 'var(--radius-full)',
-          background: 'rgba(79, 70, 229, 0.08)',
-          border: '1px solid rgba(79, 70, 229, 0.25)',
-          color: 'var(--accent-primary)',
-          fontSize: '0.8rem',
-          fontWeight: '700',
-          marginBottom: '1.5rem'
-        }}>
-          <Sparkles size={16} />
-          <span>Next-Gen Enterprise Predictive Lead Scoring</span>
-        </div>
 
         {/* Main Headline */}
         <h1 style={{
