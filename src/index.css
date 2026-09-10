@@ -1,26 +1,26 @@
 /* SaleSahara Enterprise SaaS Theme & Design System */
 
 :root, [data-theme="light"] {
-  --bg-dark: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #ffffff;
-  --bg-surface-hover: #f1f5f9;
-  --bg-card: #ffffff;
+  --bg-dark: #ffffff;
+  --bg-surface: rgba(255, 255, 255, 0.85);
+  --bg-surface-elevated: rgba(255, 255, 255, 0.95);
+  --bg-surface-hover: rgba(2, 132, 199, 0.07);
+  --bg-card: rgba(255, 255, 255, 0.78);
   
-  --border-subtle: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-focus: #4f46e5;
+  --border-subtle: rgba(226, 232, 240, 0.85);
+  --border-medium: rgba(203, 213, 225, 0.9);
+  --border-focus: #0284c7;
 
-  --accent-primary: #4f46e5; /* Indigo */
-  --accent-primary-hover: #4338ca;
-  --accent-cyan: #0284c7; /* Vibrant Sky/Cyan for light mode */
-  --accent-violet: #7c3aed;
+  --accent-primary: #0284c7; /* Cyan / Blue */
+  --accent-primary-hover: #0369a1;
+  --accent-cyan: #0284c7;
+  --accent-violet: #6366f1;
   
-  --status-very-high: #dc2626; /* Red */
-  --status-high: #ea580c; /* Orange */
-  --status-medium: #d97706; /* Amber */
-  --status-low: #64748b; /* Slate */
-  --status-success: #059669; /* Emerald */
+  --status-very-high: #0284c7;
+  --status-high: #0ea5e9;
+  --status-medium: #64748b;
+  --status-low: #94a3b8;
+  --status-success: #059669;
 
   --text-main: #0f172a; /* Slate 900 */
   --text-muted: #475569; /* Slate 600 */
@@ -204,19 +204,19 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Card Styling - Glassmorphic */
 .card {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  border: 1px solid var(--border-subtle);
   border-radius: 20px;
   padding: 1.35rem;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: var(--shadow-md);
   transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .card:hover {
-  border-color: rgba(105, 240, 238, 0.25);
-  box-shadow: 0 8px 32px 0 rgba(105, 240, 238, 0.10), 0 0 15px rgba(105, 240, 238, 0.08);
+  border-color: rgba(2, 132, 199, 0.35);
+  box-shadow: var(--shadow-lg), 0 0 15px rgba(2, 132, 199, 0.08);
 }
 
 .card-interactive {
@@ -317,11 +317,11 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   overflow-x: auto;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.10);
-  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  box-shadow: var(--shadow-md);
 }
 
 .custom-table {

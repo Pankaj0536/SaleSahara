@@ -32,10 +32,10 @@ export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpe
       position: 'sticky',
       top: 0,
       zIndex: 80,
-      background: 'rgba(10, 16, 26, 0.68)',
+      background: 'var(--bg-surface)',
       backdropFilter: 'blur(24px)',
       WebkitBackdropFilter: 'blur(24px)',
-      borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+      borderBottom: '1px solid var(--border-subtle)',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -61,7 +61,7 @@ export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpe
 
         {/* Page Title */}
         <div style={{ display: 'none', minWidth: '160px' }} className="navbar-title-desktop">
-          <span style={{ fontSize: '0.95rem', fontWeight: '800', color: '#ffffff', letterSpacing: '-0.01em' }}>
+          <span style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
             {screenTitles[currentScreen] || 'AI Platform'}
           </span>
         </div>
@@ -81,8 +81,8 @@ export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpe
             style={{
               width: '100%',
               padding: '0.45rem 0.85rem 0.45rem 2.2rem',
-              background: 'rgba(255, 255, 255, 0.05)',
-              border: '1px solid rgba(255, 255, 255, 0.10)',
+              background: 'var(--bg-surface-hover)',
+              border: '1px solid var(--border-subtle)',
               borderRadius: 'var(--radius-full)',
               color: 'var(--text-main)',
               fontSize: '0.85rem',
@@ -103,21 +103,20 @@ export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpe
           gap: '0.45rem',
           padding: '0.35rem 0.75rem',
           borderRadius: '9999px',
-          background: 'rgba(105, 240, 238, 0.08)',
-          border: '1px solid rgba(105, 240, 238, 0.3)',
-          boxShadow: '0 0 15px rgba(105, 240, 238, 0.18)',
+          background: 'var(--bg-surface-hover)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-sm)',
           fontSize: '0.725rem',
           fontWeight: '800',
           letterSpacing: '0.06em',
-          color: '#69f0ee',
-          textShadow: '0 0 10px rgba(105, 240, 238, 0.6)'
+          color: 'var(--accent-primary)'
         }}>
           <span style={{
             width: '7px',
             height: '7px',
             borderRadius: '50%',
-            background: '#69f0ee',
-            boxShadow: '0 0 8px #69f0ee',
+            background: '#10b981',
+            boxShadow: '0 0 8px #10b981',
             display: 'inline-block'
           }} />
           <span>● AI ENGINE ONLINE</span>

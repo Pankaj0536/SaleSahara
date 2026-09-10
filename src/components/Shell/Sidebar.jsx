@@ -49,38 +49,38 @@ export const Sidebar = ({ currentScreen, onNavigate, onLogout, isOpenMobile, onC
         position: 'fixed',
         top: 0,
         left: 0,
-        background: 'rgba(10, 16, 26, 0.68)',
+        background: 'var(--bg-surface)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        borderRight: '1px solid rgba(105, 240, 238, 0.14)',
+        borderRight: '1px solid var(--border-subtle)',
         display: 'flex',
         flexDirection: 'column',
         zIndex: 100,
         transition: 'transform var(--transition-normal)',
-        boxShadow: '4px 0 24px rgba(0, 0, 0, 0.35)'
+        boxShadow: 'var(--shadow-md)'
       }}>
         {/* Header Branding */}
-        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid rgba(255, 255, 255, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
             <div style={{
               width: '36px',
               height: '36px',
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, rgba(105, 240, 238, 0.2) 0%, rgba(52, 166, 203, 0.3) 100%)',
-              border: '1px solid rgba(105, 240, 238, 0.4)',
+              background: 'linear-gradient(135deg, rgba(2, 132, 199, 0.15) 0%, rgba(52, 166, 203, 0.25) 100%)',
+              border: '1px solid rgba(2, 132, 199, 0.35)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#69f0ee',
-              boxShadow: '0 0 15px rgba(105, 240, 238, 0.25)'
+              color: 'var(--accent-primary)',
+              boxShadow: 'var(--shadow-glow-cyan)'
             }}>
               <TrendingUp size={20} strokeWidth={2.5} />
             </div>
             <div>
-              <h1 style={{ fontSize: '1.1rem', fontWeight: '800', letterSpacing: '0.04em', color: '#ffffff', lineHeight: 1.1 }}>
-                LEADIQ
+              <h1 style={{ fontSize: '1.15rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--text-main)', lineHeight: 1.1 }}>
+                SalesSahara
               </h1>
-              <p style={{ fontSize: '0.625rem', color: '#69f0ee', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '3px', textShadow: '0 0 8px rgba(105, 240, 238, 0.5)' }}>
+              <p style={{ fontSize: '0.625rem', color: 'var(--accent-cyan)', fontWeight: '700', letterSpacing: '0.08em', textTransform: 'uppercase', marginTop: '3px' }}>
                 AI Sales Intelligence
               </p>
             </div>
@@ -117,12 +117,11 @@ export const Sidebar = ({ currentScreen, onNavigate, onLogout, isOpenMobile, onC
                   borderRadius: '12px',
                   border: 'none',
                   background: isActive
-                    ? 'rgba(105, 240, 238, 0.08)'
+                    ? 'var(--bg-surface-hover)'
                     : 'transparent',
-                  borderLeft: isActive ? '3px solid #69f0ee' : '3px solid transparent',
-                  color: isActive ? '#69f0ee' : 'var(--text-muted)',
-                  boxShadow: isActive ? '0 0 15px rgba(105, 240, 238, 0.15), inset 0 0 12px rgba(105, 240, 238, 0.04)' : 'none',
-                  textShadow: isActive ? '0 0 8px rgba(105, 240, 238, 0.35)' : 'none',
+                  borderLeft: isActive ? '3px solid var(--accent-primary)' : '3px solid transparent',
+                  color: isActive ? 'var(--accent-primary)' : 'var(--text-muted)',
+                  boxShadow: isActive ? 'var(--shadow-glow-cyan)' : 'none',
                   fontWeight: isActive ? '700' : '500',
                   fontSize: '0.875rem',
                   cursor: 'pointer',
@@ -131,7 +130,7 @@ export const Sidebar = ({ currentScreen, onNavigate, onLogout, isOpenMobile, onC
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                  <IconComponent size={18} color={isActive ? '#69f0ee' : item.highlight ? 'var(--accent-cyan)' : 'currentColor'} />
+                  <IconComponent size={18} color={isActive ? 'var(--accent-primary)' : item.highlight ? 'var(--accent-cyan)' : 'currentColor'} />
                   <span>{item.label}</span>
                 </div>
 
@@ -141,9 +140,9 @@ export const Sidebar = ({ currentScreen, onNavigate, onLogout, isOpenMobile, onC
                     fontWeight: '700',
                     padding: '0.15rem 0.45rem',
                     borderRadius: 'var(--radius-full)',
-                    background: item.badge === 'Healthy' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(105, 240, 238, 0.1)',
-                    color: item.badge === 'Healthy' ? '#10b981' : '#69f0ee',
-                    border: '1px solid rgba(105, 240, 238, 0.2)'
+                    background: item.badge === 'Healthy' ? 'rgba(16, 185, 129, 0.12)' : 'var(--bg-surface-hover)',
+                    color: item.badge === 'Healthy' ? '#10b981' : 'var(--accent-primary)',
+                    border: '1px solid var(--border-subtle)'
                   }}>
                     {item.badge}
                   </span>

@@ -20,8 +20,9 @@ import { ModelIntelligenceScreen } from './components/Screens/ModelIntelligenceS
 import { ImportDataScreen } from './components/Screens/ImportDataScreen';
 import { AddLeadModal } from './components/Screens/AddLeadModal';
 import { AIAssistantDrawer } from './components/Screens/AIAssistantDrawer';
+import { AIAssistantScreen } from './components/Screens/AIAssistantScreen';
 import { SettingsScreen } from './components/Screens/SettingsScreen';
-import { GradientBlinds } from './components/Backgrounds/GradientBlinds';
+import Aurora from './components/Backgrounds/Aurora';
 
 export default function App() {
   // Navigation view: 'landing' | 'login' | 'app'
@@ -29,8 +30,8 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState('dashboard');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   
-  // Theme state defaulting to dark LeadIQ environment
-  const [theme, setTheme] = useState('dark');
+  // Theme state defaulting to light (clean white background)
+  const [theme, setTheme] = useState('light');
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -213,14 +214,12 @@ export default function App() {
             )}
 
             {currentScreen === 'ai-assistant' && (
-              <div style={{ padding: '2rem' }}>
-                <h1 style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
-                  AI Assistant Workspace
-                </h1>
-                <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>
-                  Use the floating AI Assistant widget at the bottom right to query lead scores, run simulations, or filter pipeline accounts.
-                </p>
-              </div>
+              <AIAssistantScreen
+                leads={leads}
+                onSelectLead={handleSelectLead}
+                onTriggerAction={handleTriggerAction}
+                onNavigate={(screenId) => setCurrentScreen(screenId)}
+              />
             )}
 
             {currentScreen === 'settings' && (
@@ -234,11 +233,19 @@ export default function App() {
     );
   };
 
-  // 3. Render Layered Application (Gradient Blinds -> Dark Translucent Overlay -> App Shell)
+  // 3. Render Layered Application (Gradient Blinds -> Atmospheric Overlay -> App Shell)
+  const isLight = theme === 'light';
+
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', background: '#050607', color: 'var(--text-main)', overflowX: 'hidden' }}>
+    <div style={{
+      position: 'relative',
+      minHeight: '100vh',
+      background: isLight ? '#ffffff' : '#050607',
+      color: 'var(--text-main)',
+      overflowX: 'hidden'
+    }}>
       
-      {/* Layer 1: Gradient Blinds Background (Fixed, full viewport) */}
+      {/* Layer 1: Aurora WebGL Background (Fixed, full viewport) */}
       <div style={{
         position: 'fixed',
         inset: 0,
@@ -247,21 +254,18 @@ export default function App() {
         zIndex: 0,
         pointerEvents: 'none',
         overflow: 'hidden',
-        background: '#050607'
+        background: isLight ? '#ffffff' : '#050607'
       }}>
-        <GradientBlinds
-          gradientColors={['#69F0EE', '#34A6CB']}
-          blindCount={14}
-          noise={0.16}
-          angle={20}
-          spotlightRadius={0.65}
-          spotlightSoftness={1.1}
-          spotlightOpacity={0.82}
-          mouseDampening={0.12}
+        <Aurora
+          colorStops={["#6d28d9", "#ec4899", "#06b6d4"]}
+          blend={0.5}
+          amplitude={1.0}
+          speed={0.5}
+          lightMode={isLight}
         />
       </div>
 
-      {/* Layer 2: Dark Atmospheric Transparency Overlay */}
+      {/* Layer 2: Atmospheric Transparency Overlay */}
       <div style={{
         position: 'fixed',
         inset: 0,
@@ -269,7 +273,9 @@ export default function App() {
         height: '100vh',
         zIndex: 1,
         pointerEvents: 'none',
-        background: 'radial-gradient(ellipse at 50% 30%, rgba(5, 6, 7, 0.55) 0%, rgba(5, 6, 7, 0.84) 100%)'
+        background: isLight
+          ? 'radial-gradient(ellipse at 50% 20%, transparent 0%, rgba(255, 255, 255, 0.20) 100%)'
+          : 'radial-gradient(ellipse at 50% 30%, rgba(5, 6, 7, 0.55) 0%, rgba(5, 6, 7, 0.84) 100%)'
       }} />
 
       {/* Layer 3: Application Shell & Glassmorphic Surfaces */}
