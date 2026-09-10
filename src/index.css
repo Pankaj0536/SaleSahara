@@ -1,26 +1,26 @@
 /* SaleSahara Enterprise SaaS Theme & Design System */
 
 :root, [data-theme="light"] {
-  --bg-dark: #f8fafc;
-  --bg-surface: #ffffff;
-  --bg-surface-elevated: #ffffff;
-  --bg-surface-hover: #f1f5f9;
-  --bg-card: #ffffff;
+  --bg-dark: #ffffff;
+  --bg-surface: rgba(255, 255, 255, 0.85);
+  --bg-surface-elevated: rgba(255, 255, 255, 0.95);
+  --bg-surface-hover: rgba(2, 132, 199, 0.07);
+  --bg-card: rgba(255, 255, 255, 0.78);
   
-  --border-subtle: #e2e8f0;
-  --border-medium: #cbd5e1;
-  --border-focus: #4f46e5;
+  --border-subtle: rgba(226, 232, 240, 0.85);
+  --border-medium: rgba(203, 213, 225, 0.9);
+  --border-focus: #0284c7;
 
-  --accent-primary: #4f46e5; /* Indigo */
-  --accent-primary-hover: #4338ca;
-  --accent-cyan: #0284c7; /* Vibrant Sky/Cyan for light mode */
-  --accent-violet: #7c3aed;
+  --accent-primary: #0284c7; /* Cyan / Blue */
+  --accent-primary-hover: #0369a1;
+  --accent-cyan: #0284c7;
+  --accent-violet: #6366f1;
   
-  --status-very-high: #dc2626; /* Red */
-  --status-high: #ea580c; /* Orange */
-  --status-medium: #d97706; /* Amber */
-  --status-low: #64748b; /* Slate */
-  --status-success: #059669; /* Emerald */
+  --status-very-high: #0284c7;
+  --status-high: #0ea5e9;
+  --status-medium: #64748b;
+  --status-low: #94a3b8;
+  --status-success: #059669;
 
   --text-main: #0f172a; /* Slate 900 */
   --text-muted: #475569; /* Slate 600 */
@@ -46,30 +46,30 @@
 }
 
 [data-theme="dark"] {
-  --bg-dark: #090d16;
-  --bg-surface: #0f172a;
-  --bg-surface-elevated: #1e293b;
-  --bg-surface-hover: #273549;
-  --bg-card: rgba(15, 23, 42, 0.85);
+  --bg-dark: #050607;
+  --bg-surface: rgba(10, 16, 26, 0.65);
+  --bg-surface-elevated: rgba(16, 24, 38, 0.75);
+  --bg-surface-hover: rgba(105, 240, 238, 0.08);
+  --bg-card: rgba(255, 255, 255, 0.04);
   
-  --border-subtle: rgba(255, 255, 255, 0.07);
+  --border-subtle: rgba(255, 255, 255, 0.08);
   --border-medium: rgba(255, 255, 255, 0.12);
-  --border-focus: #6366f1;
+  --border-focus: #69f0ee;
 
-  --accent-primary: #6366f1;
-  --accent-primary-hover: #4f46e5;
-  --accent-cyan: #06b6d4;
+  --accent-primary: #34a6cb;
+  --accent-primary-hover: #2ba0c5;
+  --accent-cyan: #69f0ee;
   --accent-violet: #8b5cf6;
 
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
-  --shadow-glow: 0 0 25px rgba(99, 102, 241, 0.25);
-  --shadow-glow-cyan: 0 0 25px rgba(6, 182, 212, 0.25);
+  --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 6px 16px -1px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 28px -3px rgba(0, 0, 0, 0.6);
+  --shadow-glow: 0 0 25px rgba(52, 166, 203, 0.25);
+  --shadow-glow-cyan: 0 0 25px rgba(105, 240, 238, 0.35);
 }
 
 * {
@@ -202,19 +202,21 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 1rem;
 }
 
-/* Card Styling */
+/* Card Styling - Glassmorphic */
 .card {
   background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 1.25rem;
-  box-shadow: var(--shadow-sm);
-  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  border-radius: 20px;
+  padding: 1.35rem;
+  box-shadow: var(--shadow-md);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
 }
 
 .card:hover {
-  border-color: var(--border-medium);
-  box-shadow: var(--shadow-md);
+  border-color: rgba(2, 132, 199, 0.35);
+  box-shadow: var(--shadow-lg), 0 0 15px rgba(2, 132, 199, 0.08);
 }
 
 .card-interactive {
@@ -222,9 +224,20 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .card-interactive:hover {
-  border-color: rgba(79, 70, 229, 0.4);
-  box-shadow: var(--shadow-md);
+  border-color: rgba(105, 240, 238, 0.45);
+  box-shadow: 0 12px 36px 0 rgba(105, 240, 238, 0.15), 0 0 20px rgba(105, 240, 238, 0.12);
   transform: translateY(-2px);
+}
+
+.card-ai {
+  background: linear-gradient(135deg, rgba(105, 240, 238, 0.06) 0%, rgba(52, 166, 203, 0.03) 100%);
+  border: 1px solid rgba(105, 240, 238, 0.25);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 20px rgba(105, 240, 238, 0.10);
+}
+
+.card-ai:hover {
+  border-color: rgba(105, 240, 238, 0.45);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 25px rgba(105, 240, 238, 0.18);
 }
 
 /* Priority & Status Badges */
@@ -299,14 +312,16 @@ h1, h2, h3, h4, h5, h6 {
   animation: slideInRight 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-/* Table Styling */
+/* Table Styling - Glassmorphic */
 .table-container {
   width: 100%;
   overflow-x: auto;
-  border-radius: var(--radius-lg);
+  border-radius: 20px;
   border: 1px solid var(--border-subtle);
-  background: var(--bg-surface);
-  box-shadow: var(--shadow-sm);
+  background: var(--bg-card);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-md);
 }
 
 .custom-table {
@@ -317,29 +332,29 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .custom-table th {
-  background: var(--bg-surface-hover);
-  padding: 0.85rem 1.25rem;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.95rem 1.25rem;
   color: var(--text-muted);
   font-weight: 600;
   font-size: 0.775rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid var(--border-medium);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .custom-table td {
-  padding: 1rem 1.25rem;
-  border-bottom: 1px solid var(--border-subtle);
+  padding: 1.05rem 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   color: var(--text-main);
   vertical-align: middle;
 }
 
 .custom-table tbody tr {
-  transition: background-color var(--transition-fast);
+  transition: background-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
 .custom-table tbody tr:hover {
-  background-color: var(--bg-surface-hover);
+  background-color: rgba(105, 240, 238, 0.05);
 }
 
 /* Forms */

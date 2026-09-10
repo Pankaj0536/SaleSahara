@@ -2,57 +2,93 @@ import React from 'react';
 import { Phone, MessageSquare, Mail, Calendar, Sparkles } from 'lucide-react';
 
 export const NextActionCard = ({
-  action = "Call within 2 hours",
-  reason = "This lead recently requested a demo and shows strong buying intent.",
+  action = "Contact this lead within 2 hours",
+  reason = "Lead requested enterprise demo and showed high pricing page activity.",
+  channel = "Email & Phone",
+  recommendedAction = "Schedule product demo",
+  confidence = "91.4%",
   leadName = "Rahul Sharma",
   onTriggerAction
 }) => {
   return (
     <div style={{
-      background: 'linear-gradient(135deg, rgba(79, 70, 229, 0.08) 0%, rgba(2, 132, 199, 0.05) 100%)',
-      border: '1px solid rgba(79, 70, 229, 0.25)',
-      borderRadius: 'var(--radius-lg)',
-      padding: '1.25rem',
+      background: 'rgba(255, 255, 255, 0.04)',
+      backdropFilter: 'blur(20px)',
+      WebkitBackdropFilter: 'blur(20px)',
+      border: '1px solid rgba(105, 240, 238, 0.25)',
+      borderRadius: '20px',
+      padding: '1.4rem',
       position: 'relative',
       overflow: 'hidden',
-      boxShadow: 'var(--shadow-sm)'
+      boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37), 0 0 25px rgba(105, 240, 238, 0.12)'
     }}>
       <div style={{
         position: 'absolute',
-        top: '-20px',
-        right: '-20px',
-        width: '100px',
-        height: '100px',
-        background: 'radial-gradient(circle, rgba(79, 70, 229, 0.15) 0%, transparent 70%)',
+        top: '-30px',
+        right: '-30px',
+        width: '120px',
+        height: '120px',
+        background: 'radial-gradient(circle, rgba(105, 240, 238, 0.18) 0%, transparent 70%)',
         pointerEvents: 'none'
       }} />
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.6rem' }}>
-        <Sparkles size={18} color="var(--accent-cyan)" />
-        <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--accent-cyan)', fontWeight: '700' }}>
-          AI Recommended Action
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+        <Sparkles size={18} color="#69f0ee" />
+        <h4 style={{
+          fontSize: '0.8rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.08em',
+          color: '#69f0ee',
+          fontWeight: '800',
+          textShadow: '0 0 10px rgba(105, 240, 238, 0.5)'
+        }}>
+          AI Recommendation
         </h4>
       </div>
 
-      <div style={{ fontSize: '1.35rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-        <span>🔥</span>
+      <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+        <span>⚡</span>
         <span>{action}</span>
       </div>
 
-      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '1.25rem', lineHeight: '1.5' }}>
-        <strong>Reason:</strong> "{reason}"
-      </p>
+      {/* Structured AI Recommendation signals */}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.45rem',
+        marginBottom: '1.25rem',
+        padding: '0.75rem 1rem',
+        borderRadius: '12px',
+        background: 'rgba(105, 240, 238, 0.04)',
+        border: '1px solid rgba(105, 240, 238, 0.12)',
+        fontSize: '0.825rem'
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ color: 'var(--text-muted)' }}>Recommended channel</span>
+          <span style={{ fontWeight: '700', color: '#69f0ee' }}>→ {channel}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ color: 'var(--text-muted)' }}>Recommended action</span>
+          <span style={{ fontWeight: '700', color: '#ffffff' }}>→ {recommendedAction}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <span style={{ color: 'var(--text-muted)' }}>Confidence</span>
+          <span style={{ fontWeight: '800', color: '#69f0ee', textShadow: '0 0 8px rgba(105, 240, 238, 0.4)' }}>
+            → {confidence}
+          </span>
+        </div>
+      </div>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.6rem' }}>
         <button
-          className="btn btn-primary btn-sm"
+          className="btn btn-cyan btn-sm"
           onClick={() => onTriggerAction && onTriggerAction('Call', `Initiating call to ${leadName}...`)}
         >
           <Phone size={14} />
           Call
         </button>
         <button
-          className="btn btn-cyan btn-sm"
+          className="btn btn-secondary btn-sm"
           onClick={() => onTriggerAction && onTriggerAction('WhatsApp', `Opening WhatsApp chat with ${leadName}...`)}
         >
           <MessageSquare size={14} />

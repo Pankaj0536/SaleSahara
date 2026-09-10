@@ -2,10 +2,23 @@ import React, { useState } from 'react';
 import { Search, Bell, Plus, Menu, HelpCircle, Sparkles, AlertTriangle, Info, Sun, Moon } from 'lucide-react';
 import { NOTIFICATIONS_LIST } from '../../data/mockData';
 
-export const Navbar = ({ onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, theme, onToggleTheme }) => {
+export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, theme, onToggleTheme }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications, setNotifications] = useState(NOTIFICATIONS_LIST);
   const [searchQuery, setSearchQuery] = useState('');
+
+  const screenTitles = {
+    'dashboard': 'Dashboard Overview',
+    'leads': 'Leads Pipeline',
+    'lead-details': 'Lead Dossier & Insights',
+    'recommendations': 'AI Next Best Actions',
+    'analytics': 'Conversion Analytics',
+    'data-quality': 'Data Quality Health',
+    'model-intelligence': 'ML Model Intelligence',
+    'import': 'Data Ingestion',
+    'ai-assistant': 'AI Sales Assistant',
+    'settings': 'Platform Settings'
+  };
 
   const unreadCount = notifications.filter(n => !n.read).length;
 
@@ -20,7 +33,8 @@ export const Navbar = ({ onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, th
       top: 0,
       zIndex: 80,
       background: 'var(--bg-surface)',
-      backdropFilter: 'blur(12px)',
+      backdropFilter: 'blur(24px)',
+      WebkitBackdropFilter: 'blur(24px)',
       borderBottom: '1px solid var(--border-subtle)',
       display: 'flex',
       alignItems: 'center',
@@ -28,8 +42,8 @@ export const Navbar = ({ onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, th
       padding: '0 1.5rem',
       marginLeft: '260px'
     }} className="main-navbar">
-      {/* Left Search & Mobile Toggle */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1, maxWidth: '480px' }}>
+      {/* Left: Mobile Toggle, Screen Title & Search */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', flex: 1, maxWidth: '640px' }}>
         <button
           onClick={onOpenMobileSidebar}
           className="hamburger-btn"
@@ -45,7 +59,14 @@ export const Navbar = ({ onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, th
           <Menu size={22} />
         </button>
 
-        <div style={{ position: 'relative', width: '100%' }}>
+        {/* Page Title */}
+        <div style={{ display: 'none', minWidth: '160px' }} className="navbar-title-desktop">
+          <span style={{ fontSize: '0.95rem', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
+            {screenTitles[currentScreen] || 'AI Platform'}
+          </span>
+        </div>
+
+        <div style={{ position: 'relative', width: '100%', maxWidth: '380px' }}>
           <Search size={16} color="var(--text-muted)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
           <input
             type="text"
@@ -60,8 +81,8 @@ export const Navbar = ({ onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, th
             style={{
               width: '100%',
               padding: '0.45rem 0.85rem 0.45rem 2.2rem',
-              background: 'var(--bg-dark)',
-              border: '1px solid var(--border-medium)',
+              background: 'var(--bg-surface-hover)',
+              border: '1px solid var(--border-subtle)',
               borderRadius: 'var(--radius-full)',
               color: 'var(--text-main)',
               fontSize: '0.85rem',
@@ -72,8 +93,34 @@ export const Navbar = ({ onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, th
         </div>
       </div>
 
-      {/* Right Controls */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+      {/* Right Controls & AI Engine Online Indicator */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        
+        {/* AI Engine Status Indicator */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.45rem',
+          padding: '0.35rem 0.75rem',
+          borderRadius: '9999px',
+          background: 'var(--bg-surface-hover)',
+          border: '1px solid var(--border-subtle)',
+          boxShadow: 'var(--shadow-sm)',
+          fontSize: '0.725rem',
+          fontWeight: '800',
+          letterSpacing: '0.06em',
+          color: 'var(--accent-primary)'
+        }}>
+          <span style={{
+            width: '7px',
+            height: '7px',
+            borderRadius: '50%',
+            background: '#10b981',
+            boxShadow: '0 0 8px #10b981',
+            display: 'inline-block'
+          }} />
+          <span>● AI ENGINE ONLINE</span>
+        </div>
         
         {/* Theme Toggle Button */}
         <button
@@ -152,10 +199,12 @@ export const Navbar = ({ onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, th
               top: '48px',
               right: 0,
               width: '340px',
-              background: 'var(--bg-surface-elevated)',
-              border: '1px solid var(--border-medium)',
-              borderRadius: 'var(--radius-lg)',
-              boxShadow: 'var(--shadow-lg)',
+              background: 'rgba(16, 24, 38, 0.88)',
+              backdropFilter: 'blur(24px)',
+              WebkitBackdropFilter: 'blur(24px)',
+              border: '1px solid rgba(105, 240, 238, 0.18)',
+              borderRadius: '20px',
+              boxShadow: '0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(105, 240, 238, 0.1)',
               zIndex: 200,
               overflow: 'hidden',
               animation: 'fadeIn 0.2s ease-out'
@@ -254,15 +303,15 @@ export const Navbar = ({ onOpenMobileSidebar, onOpenAddLeadModal, onNavigate, th
           width: '34px',
           height: '34px',
           borderRadius: '50%',
-          background: 'linear-gradient(135deg, #4f46e5 0%, #0284c7 100%)',
-          color: '#ffffff',
-          fontWeight: '700',
+          background: 'linear-gradient(135deg, #69f0ee 0%, #34a6cb 100%)',
+          color: '#050607',
+          fontWeight: '800',
           fontSize: '0.85rem',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
           cursor: 'pointer',
-          boxShadow: 'var(--shadow-glow)'
+          boxShadow: '0 0 12px rgba(105, 240, 238, 0.35)'
         }}>
           H
         </div>
