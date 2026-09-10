@@ -46,14 +46,15 @@ export const LandingPage = ({ onLoginSuccess, onOpenLoginScreen }) => {
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        background: 'rgba(10, 16, 26, 0.68)',
-        borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        background: 'var(--bg-surface-elevated)',
+        borderBottom: '1px solid var(--border-subtle)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
         padding: '0.9rem 2rem',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        boxShadow: 'var(--shadow-sm)'
       }}>
         {/* Brand Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }}>
@@ -72,20 +73,20 @@ export const LandingPage = ({ onLoginSuccess, onOpenLoginScreen }) => {
           </div>
           <div>
             <span style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.02em', color: 'var(--text-main)' }}>
-              SaleSahara
+              SalesSahara
             </span>
-            <span style={{ fontSize: '0.65rem', color: 'var(--accent-cyan)', fontWeight: '700', marginLeft: '6px', textTransform: 'uppercase' }}>
-
+            <span style={{ fontSize: '0.65rem', color: 'var(--accent-primary)', fontWeight: '800', marginLeft: '6px', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+              AI INTELLIGENCE
             </span>
           </div>
         </div>
 
         {/* Center Nav Links */}
         <nav style={{ display: 'flex', alignItems: 'center', gap: '2rem' }} className="desktop-only">
-          <a href="#features" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '600' }}>Features</a>
-          <a href="#credentials" style={{ color: 'var(--accent-primary)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '700' }}>Company Login</a>
-          <a href="#model" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '600' }}>Model Intelligence</a>
-          <a href="#pricing" style={{ color: 'var(--text-muted)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '600' }}>Pricing</a>
+          <a href="#features" style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '700' }}>Features</a>
+          <a href="#credentials" style={{ color: 'var(--accent-primary)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '800' }}>Company Login</a>
+          <a href="#model" style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '700' }}>Model Intelligence</a>
+          <a href="#pricing" style={{ color: 'var(--text-main)', textDecoration: 'none', fontSize: '0.9rem', fontWeight: '700' }}>Pricing</a>
         </nav>
 
         {/* Right CTA */}

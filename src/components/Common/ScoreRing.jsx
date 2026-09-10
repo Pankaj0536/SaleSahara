@@ -42,7 +42,7 @@ export const ScoreRing = ({ percentage = 91, priority = "VERY HIGH", confidence 
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="rgba(255, 255, 255, 0.08)"
+            stroke="var(--border-medium)"
             strokeWidth={strokeWidth}
             fill="transparent"
           />
@@ -62,12 +62,12 @@ export const ScoreRing = ({ percentage = 91, priority = "VERY HIGH", confidence 
               transition: 'stroke-dashoffset 1s ease-in-out',
               transform: 'rotate(-90deg)',
               transformOrigin: '50% 50%',
-              filter: percentage >= 70 ? 'drop-shadow(0 0 8px rgba(105, 240, 238, 0.5))' : 'none'
+              filter: percentage >= 70 ? 'drop-shadow(0 0 8px rgba(2, 132, 199, 0.4))' : 'none'
             }}
           />
         </svg>
 
-        {/* Center Dominant Percentage Text with subtle cyan illumination */}
+        {/* Center Dominant Percentage Text */}
         <div style={{
           position: 'absolute',
           top: 0,
@@ -80,12 +80,11 @@ export const ScoreRing = ({ percentage = 91, priority = "VERY HIGH", confidence 
           justifyContent: 'center',
           textAlign: 'center'
         }}>
-          <span style={{
+          <span className="tabular-nums" style={{
             fontSize: size > 140 ? '2.5rem' : '1.75rem',
-            fontWeight: '800',
+            fontWeight: '900',
             letterSpacing: '-0.03em',
-            color: '#ffffff',
-            textShadow: percentage >= 70 ? '0 0 16px rgba(105, 240, 238, 0.45)' : 'none',
+            color: 'var(--text-main)',
             lineHeight: 1
           }}>
             {percentage}%

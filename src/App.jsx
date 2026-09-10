@@ -22,6 +22,7 @@ import { AddLeadModal } from './components/Screens/AddLeadModal';
 import { AIAssistantDrawer } from './components/Screens/AIAssistantDrawer';
 import { AIAssistantScreen } from './components/Screens/AIAssistantScreen';
 import { SettingsScreen } from './components/Screens/SettingsScreen';
+import { CommandPalette } from './components/Common/CommandPalette';
 import Aurora from './components/Backgrounds/Aurora';
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
   const [currentView, setCurrentView] = useState('landing');
   const [currentScreen, setCurrentScreen] = useState('dashboard');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   
   // Theme state defaulting to light (clean white background)
   const [theme, setTheme] = useState('light');
@@ -36,6 +38,18 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
+
+  // Global Command Palette Shortcut: Cmd+K / Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setIsCommandPaletteOpen(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleToggleTheme = () => {
     const nextTheme = theme === 'light' ? 'dark' : 'light';
@@ -141,6 +155,7 @@ export default function App() {
           }}
           isOpenMobile={mobileSidebarOpen}
           onCloseMobile={() => setMobileSidebarOpen(false)}
+          onOpenCommandPalette={() => setIsCommandPaletteOpen(true)}
         />
 
         {/* Main Content Area Container */}
@@ -295,6 +310,19 @@ export default function App() {
         isOpen={isAddLeadModalOpen}
         onClose={() => setIsAddLeadModalOpen(false)}
         onAddLead={handleAddLead}
+      />
+
+      {/* Global Command Palette */}
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={(screenId) => {
+          if (currentView !== 'app') setCurrentView('app');
+          setCurrentScreen(screenId);
+        }}
+        leads={leads}
+        onSelectLead={handleSelectLead}
+        onTriggerAction={handleTriggerAction}
       />
 
       {/* Toast Notification Container */}

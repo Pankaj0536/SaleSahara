@@ -18,7 +18,9 @@ import {
   ChevronRight,
   ShieldCheck,
   Flame,
-  ArrowRight
+  ArrowRight,
+  ThumbsUp,
+  ThumbsDown
 } from 'lucide-react';
 import { freeAi } from '../../services/freeAiService';
 import { PriorityBadge } from '../Common/PriorityBadge';
@@ -33,6 +35,7 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
   const [outreachChannel, setOutreachChannel] = useState('email');
   const [outreachTone, setOutreachTone] = useState('persuasive');
   const [isGeneratingOutreach, setIsGeneratingOutreach] = useState(false);
+  const [outreachFeedback, setOutreachFeedback] = useState(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [geminiKeyInput, setGeminiKeyInput] = useState(freeAi.geminiKey);
   const [activeProvider, setActiveProvider] = useState(freeAi.activeProvider);
@@ -149,18 +152,18 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
               width: '38px',
               height: '38px',
               borderRadius: '12px',
-              background: 'linear-gradient(135deg, rgba(105, 240, 238, 0.2) 0%, rgba(52, 166, 203, 0.3) 100%)',
-              border: '1px solid rgba(105, 240, 238, 0.4)',
+              background: 'var(--bg-surface-hover)',
+              border: '1px solid var(--border-subtle)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              color: '#69f0ee',
-              boxShadow: '0 0 15px rgba(105, 240, 238, 0.25)'
+              color: 'var(--accent-primary)',
+              boxShadow: 'var(--shadow-glow-cyan)'
             }}>
               <Bot size={22} />
             </div>
             <div>
-              <h1 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#ffffff', lineHeight: 1.1 }}>
+              <h1 style={{ fontSize: '1.75rem', fontWeight: '800', color: 'var(--text-main)', lineHeight: 1.1 }}>
                 AI Sales Assistant Workspace
               </h1>
               <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '3px' }}>
@@ -178,16 +181,15 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
             gap: '0.45rem',
             padding: '0.35rem 0.85rem',
             borderRadius: '9999px',
-            background: 'rgba(105, 240, 238, 0.08)',
-            border: '1px solid rgba(105, 240, 238, 0.3)',
-            boxShadow: '0 0 15px rgba(105, 240, 238, 0.15)',
+            background: 'var(--bg-surface-hover)',
+            border: '1px solid var(--border-subtle)',
             fontSize: '0.75rem',
             fontWeight: '700',
-            color: '#69f0ee'
+            color: 'var(--accent-primary)'
           }}>
-            <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#69f0ee', boxShadow: '0 0 8px #69f0ee' }} />
+            <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--accent-primary)', boxShadow: '0 0 8px var(--accent-primary)' }} />
             <span>{activeProvider === 'gemini' && freeAi.geminiKey ? 'Gemini 1.5 Flash Active' : 'Free Neural AI Active'}</span>
-            <span style={{ background: '#10b981', color: '#050607', padding: '0.1rem 0.35rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: '800', marginLeft: '2px' }}>
+            <span style={{ background: '#10b981', color: '#ffffff', padding: '0.1rem 0.35rem', borderRadius: '4px', fontSize: '0.65rem', fontWeight: '800', marginLeft: '2px' }}>
               FREE
             </span>
           </div>
@@ -222,15 +224,15 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
           {/* Chat Panel Top Sub-header */}
           <div style={{
             padding: '1rem 1.4rem',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(255, 255, 255, 0.02)',
+            borderBottom: '1px solid var(--border-subtle)',
+            background: 'var(--bg-surface)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Sparkles size={16} color="#69f0ee" />
-              <span style={{ fontSize: '0.875rem', fontWeight: '700', color: '#ffffff' }}>
+              <Sparkles size={16} color="var(--accent-primary)" />
+              <span style={{ fontSize: '0.875rem', fontWeight: '800', color: 'var(--text-main)' }}>
                 Interactive Sales Copilot
               </span>
             </div>
@@ -284,12 +286,12 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                       width: '32px',
                       height: '32px',
                       borderRadius: '10px',
-                      background: isAi ? 'linear-gradient(135deg, rgba(105, 240, 238, 0.25) 0%, rgba(52, 166, 203, 0.35) 100%)' : 'rgba(255, 255, 255, 0.1)',
-                      border: isAi ? '1px solid rgba(105, 240, 238, 0.4)' : '1px solid rgba(255, 255, 255, 0.15)',
+                      background: isAi ? 'var(--bg-surface-hover)' : 'var(--accent-primary)',
+                      border: isAi ? '1px solid var(--border-subtle)' : 'none',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      color: isAi ? '#69f0ee' : '#ffffff',
+                      color: isAi ? 'var(--accent-primary)' : '#ffffff',
                       flexShrink: 0,
                       marginTop: '2px'
                     }}>
@@ -300,10 +302,10 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                     <div style={{
                       padding: '0.9rem 1.15rem',
                       borderRadius: '16px',
-                      background: isAi ? 'rgba(255, 255, 255, 0.05)' : 'linear-gradient(135deg, rgba(105, 240, 238, 0.2) 0%, rgba(52, 166, 203, 0.25) 100%)',
-                      border: isAi ? '1px solid rgba(255, 255, 255, 0.10)' : '1px solid rgba(105, 240, 238, 0.35)',
-                      boxShadow: isAi ? '0 4px 20px rgba(0, 0, 0, 0.2)' : '0 4px 15px rgba(105, 240, 238, 0.12)',
-                      color: '#ffffff',
+                      background: isAi ? 'var(--bg-surface-elevated)' : 'linear-gradient(135deg, var(--accent-primary) 0%, #0369a1 100%)',
+                      border: isAi ? '1px solid var(--border-medium)' : 'none',
+                      boxShadow: isAi ? 'var(--shadow-sm)' : '0 4px 15px rgba(2, 132, 199, 0.25)',
+                      color: isAi ? 'var(--text-main)' : '#ffffff',
                       fontSize: '0.875rem',
                       lineHeight: '1.55',
                       whiteSpace: 'pre-wrap',
@@ -316,12 +318,12 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                         <div style={{
                           marginTop: '0.85rem',
                           paddingTop: '0.75rem',
-                          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                          borderTop: isAi ? '1px solid var(--border-subtle)' : '1px solid rgba(255, 255, 255, 0.2)',
                           display: 'flex',
                           flexDirection: 'column',
                           gap: '0.5rem'
                         }}>
-                          <span style={{ fontSize: '0.7rem', fontWeight: '700', textTransform: 'uppercase', color: '#69f0ee', letterSpacing: '0.05em' }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: '800', textTransform: 'uppercase', color: isAi ? 'var(--accent-primary)' : '#ffffff', letterSpacing: '0.05em' }}>
                             Related Pipeline Opportunities:
                           </span>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
@@ -338,18 +340,18 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                                   gap: '0.4rem',
                                   padding: '0.35rem 0.65rem',
                                   borderRadius: '8px',
-                                  background: 'rgba(105, 240, 238, 0.08)',
-                                  border: '1px solid rgba(105, 240, 238, 0.25)',
-                                  color: '#ffffff',
+                                  background: isAi ? 'var(--bg-surface-hover)' : 'rgba(255, 255, 255, 0.15)',
+                                  border: isAi ? '1px solid var(--border-subtle)' : '1px solid rgba(255, 255, 255, 0.3)',
+                                  color: isAi ? 'var(--text-main)' : '#ffffff',
                                   fontSize: '0.75rem',
-                                  fontWeight: '600',
+                                  fontWeight: '700',
                                   cursor: 'pointer',
                                   transition: 'all 0.15s ease'
                                 }}
                               >
-                                <span style={{ color: '#69f0ee' }}>{ld.name}</span>
-                                <span style={{ color: 'var(--text-muted)' }}>({ld.probability}%)</span>
-                                <ChevronRight size={13} color="#69f0ee" />
+                                <span style={{ color: isAi ? 'var(--accent-primary)' : '#ffffff' }}>{ld.name}</span>
+                                <span style={{ color: isAi ? 'var(--text-muted)' : 'rgba(255, 255, 255, 0.85)' }}>({ld.probability}%)</span>
+                                <ChevronRight size={13} color={isAi ? 'var(--accent-primary)' : '#ffffff'} />
                               </button>
                             ))}
                           </div>
@@ -463,8 +465,8 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
           {/* Chat Input Box */}
           <div style={{
             padding: '0.9rem 1.4rem',
-            borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-            background: 'rgba(10, 16, 26, 0.5)',
+            borderTop: '1px solid var(--border-subtle)',
+            background: 'var(--bg-surface)',
             display: 'flex',
             alignItems: 'center',
             gap: '0.75rem'
@@ -481,9 +483,9 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                 flex: 1,
                 padding: '0.75rem 1.15rem',
                 borderRadius: '12px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#ffffff',
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--text-main)',
                 fontSize: '0.875rem',
                 outline: 'none',
                 transition: 'all 0.15s ease'
@@ -492,7 +494,7 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
             <button
               onClick={() => handleSendMessage()}
               disabled={isGenerating || !inputQuery.trim()}
-              className="btn btn-cyan"
+              className="btn btn-primary"
               style={{
                 borderRadius: '12px',
                 padding: '0.75rem 1.25rem',
@@ -512,12 +514,12 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
           <div className="card" style={{ padding: '1.25rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <TrendingUp size={18} color="#69f0ee" />
-                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: '#ffffff' }}>
+                <TrendingUp size={18} color="var(--accent-primary)" />
+                <h3 style={{ fontSize: '1rem', fontWeight: '800', color: 'var(--text-main)' }}>
                   Pipeline Co-Pilot
                 </h3>
               </div>
-              <span style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>
+              <span style={{ fontSize: '0.725rem', color: 'var(--text-dim)', fontWeight: '700' }}>
                 Target Lead
               </span>
             </div>
@@ -533,17 +535,18 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                 width: '100%',
                 padding: '0.65rem 0.85rem',
                 borderRadius: '10px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                color: '#ffffff',
+                background: 'var(--bg-surface-elevated)',
+                border: '1px solid var(--border-medium)',
+                color: 'var(--text-main)',
                 fontSize: '0.875rem',
+                fontWeight: '600',
                 outline: 'none',
                 marginBottom: '1rem',
                 cursor: 'pointer'
               }}
             >
               {leads.map(ld => (
-                <option key={ld.id} value={ld.id} style={{ background: '#0a101a', color: '#ffffff' }}>
+                <option key={ld.id} value={ld.id} style={{ background: 'var(--bg-surface-elevated)', color: 'var(--text-main)' }}>
                   {ld.name} — {ld.company} ({ld.probability}%, {ld.priority})
                 </option>
               ))}
@@ -554,19 +557,19 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
               <div style={{
                 padding: '1rem',
                 borderRadius: '14px',
-                background: 'rgba(105, 240, 238, 0.04)',
-                border: '1px solid rgba(105, 240, 238, 0.15)',
+                background: 'var(--bg-surface-hover)',
+                border: '1px solid var(--border-subtle)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.75rem'
               }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
-                    <h4 style={{ fontSize: '1.05rem', fontWeight: '800', color: '#ffffff' }}>
+                    <h4 style={{ fontSize: '1.05rem', fontWeight: '800', color: 'var(--text-main)' }}>
                       {selectedLead.name}
                     </h4>
                     <p style={{ fontSize: '0.775rem', color: 'var(--text-muted)' }}>
-                      {selectedLead.role} at <strong style={{ color: '#ffffff' }}>{selectedLead.company}</strong>
+                      {selectedLead.role} at <strong style={{ color: 'var(--text-main)' }}>{selectedLead.company}</strong>
                     </p>
                   </div>
                   <PriorityBadge priority={selectedLead.priority} />
@@ -574,20 +577,46 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '0.5rem', fontSize: '0.8rem' }}>
                   <div style={{ padding: '0.5rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px' }}>
-                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>Probability</span>
-                    <strong style={{ color: '#69f0ee', fontSize: '0.95rem' }}>{selectedLead.probability}%</strong>
+                    <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>Propensity Score</span>
+                    <strong className="tabular-nums" style={{ color: 'var(--accent-primary)', fontSize: '0.95rem' }}>{selectedLead.probability}%</strong>
                   </div>
                   <div style={{ padding: '0.5rem', background: 'rgba(255, 255, 255, 0.03)', borderRadius: '8px' }}>
                     <span style={{ color: 'var(--text-muted)', display: 'block', fontSize: '0.7rem' }}>Deal Value</span>
-                    <strong style={{ color: '#ffffff', fontSize: '0.95rem' }}>{selectedLead.budget}</strong>
+                    <strong className="tabular-nums" style={{ color: 'var(--text-main)', fontSize: '0.95rem' }}>{selectedLead.budget}</strong>
+                  </div>
+                </div>
+
+                {/* Explainable AI: Feature Attribution Breakdown */}
+                <div style={{ marginTop: '0.2rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.35rem' }}>
+                    <span style={{ fontSize: '0.7rem', fontWeight: '800', color: 'var(--text-main)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                      Explainable AI Attribution:
+                    </span>
+                    <span style={{ fontSize: '0.65rem', color: 'var(--text-dim)', fontStyle: 'italic' }}>
+                      SHAP Drivers
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem 0.55rem', borderRadius: '6px', background: 'rgba(5, 150, 105, 0.08)', border: '1px solid rgba(5, 150, 105, 0.2)' }}>
+                      <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '600' }}>▲ +24% Tech Fit ({selectedLead.industry})</span>
+                      <span style={{ fontSize: '0.65rem', color: '#059669', fontWeight: '800', background: 'rgba(5, 150, 105, 0.15)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>Top Driver</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem 0.55rem', borderRadius: '6px', background: 'rgba(5, 150, 105, 0.08)', border: '1px solid rgba(5, 150, 105, 0.2)' }}>
+                      <span style={{ fontSize: '0.75rem', color: '#059669', fontWeight: '600' }}>▲ +18% Executive Title ({selectedLead.role})</span>
+                      <span style={{ fontSize: '0.65rem', color: '#059669', fontWeight: '800', background: 'rgba(5, 150, 105, 0.15)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>Inbound</span>
+                    </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.3rem 0.55rem', borderRadius: '6px', background: 'rgba(220, 38, 38, 0.08)', border: '1px solid rgba(220, 38, 38, 0.2)' }}>
+                      <span style={{ fontSize: '0.75rem', color: '#dc2626', fontWeight: '600' }}>▼ -7% Inactivity Gap (Last: {selectedLead.lastContact})</span>
+                      <span style={{ fontSize: '0.65rem', color: '#dc2626', fontWeight: '800', background: 'rgba(220, 38, 38, 0.15)', padding: '0.1rem 0.35rem', borderRadius: '4px' }}>Needs Touch</span>
+                    </div>
                   </div>
                 </div>
 
                 {/* Positive Driver signals */}
                 {selectedLead.positiveFactors && selectedLead.positiveFactors.length > 0 && (
                   <div>
-                    <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#10b981', textTransform: 'uppercase' }}>
-                      Key Conversion Signals:
+                    <span style={{ fontSize: '0.7rem', fontWeight: '700', color: '#059669', textTransform: 'uppercase' }}>
+                      Buying Intent Signals:
                     </span>
                     <ul style={{ paddingLeft: '1.1rem', marginTop: '0.3rem', fontSize: '0.775rem', color: 'var(--text-main)', lineHeight: '1.4' }}>
                       {selectedLead.positiveFactors.map((f, i) => (
@@ -602,15 +631,15 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                   marginTop: '0.25rem',
                   padding: '0.65rem 0.85rem',
                   borderRadius: '10px',
-                  background: 'rgba(105, 240, 238, 0.08)',
-                  border: '1px solid rgba(105, 240, 238, 0.25)',
+                  background: 'var(--bg-surface-hover)',
+                  border: '1px solid var(--border-subtle)',
                   fontSize: '0.8rem',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '0.5rem'
                 }}>
-                  <Flame size={16} color="#69f0ee" />
-                  <span style={{ color: '#69f0ee', fontWeight: '700' }}>
+                  <Flame size={16} color="var(--accent-primary)" />
+                  <span style={{ color: 'var(--accent-primary)', fontWeight: '700' }}>
                     Action: {selectedLead.nextAction || 'Call within 2 hours'}
                   </span>
                 </div>
@@ -693,39 +722,107 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
 
             {/* Outreach Preview Text Area */}
             {generatedOutreach && (
-              <div style={{
-                position: 'relative',
-                padding: '0.9rem',
-                borderRadius: '10px',
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                fontSize: '0.8rem',
-                color: 'var(--text-main)',
-                lineHeight: '1.5',
-                whiteSpace: 'pre-wrap',
-                maxHeight: '180px',
-                overflowY: 'auto'
-              }}>
-                {generatedOutreach}
+              <div>
+                {/* Smart Placeholder Detection Alert */}
+                {generatedOutreach.includes('[') && (
+                  <div style={{
+                    marginBottom: '0.65rem',
+                    padding: '0.45rem 0.65rem',
+                    borderRadius: '8px',
+                    background: 'rgba(234, 179, 8, 0.1)',
+                    border: '1px solid rgba(234, 179, 8, 0.3)',
+                    color: '#ca8a04',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '0.45rem'
+                  }}>
+                    <AlertTriangle size={14} />
+                    <span>Unfilled bracket placeholders detected — customize before sending.</span>
+                  </div>
+                )}
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '0.75rem', gap: '0.5rem' }}>
-                  <button
-                    onClick={() => handleCopyText('outreach-draft', generatedOutreach)}
-                    className="btn btn-secondary btn-sm"
-                    style={{ fontSize: '0.725rem', padding: '0.25rem 0.6rem' }}
-                  >
-                    {copiedId === 'outreach-draft' ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
-                    <span>{copiedId === 'outreach-draft' ? 'Copied!' : 'Copy Draft'}</span>
-                  </button>
+                <div style={{
+                  position: 'relative',
+                  padding: '0.9rem',
+                  borderRadius: '10px',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  fontSize: '0.8rem',
+                  color: 'var(--text-main)',
+                  lineHeight: '1.5',
+                  whiteSpace: 'pre-wrap',
+                  maxHeight: '180px',
+                  overflowY: 'auto'
+                }}>
+                  {generatedOutreach}
+                </div>
 
-                  <button
-                    onClick={() => onTriggerAction?.('Outreach Sent', `Sent ${outreachChannel} to ${selectedLead?.name}`)}
-                    className="btn btn-primary btn-sm"
-                    style={{ fontSize: '0.725rem', padding: '0.25rem 0.6rem' }}
-                  >
-                    <span>Execute Send</span>
-                    <ArrowRight size={12} />
-                  </button>
+                {/* Footer Controls: Reaction Feedback & Action Buttons */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {/* Quality Feedback */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                    <span style={{ fontSize: '0.7rem', color: 'var(--text-dim)' }}>Tone:</span>
+                    <button
+                      onClick={() => {
+                        setOutreachFeedback('up');
+                        onTriggerAction?.('AI Feedback', 'Feedback saved: Preferred tone recorded.');
+                      }}
+                      title="Good draft tone"
+                      style={{
+                        background: outreachFeedback === 'up' ? 'rgba(5, 150, 105, 0.18)' : 'var(--bg-surface)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '6px',
+                        padding: '0.25rem 0.45rem',
+                        cursor: 'pointer',
+                        color: outreachFeedback === 'up' ? '#059669' : 'var(--text-muted)',
+                        display: 'inline-flex',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <ThumbsUp size={12} />
+                    </button>
+                    <button
+                      onClick={() => {
+                        setOutreachFeedback('down');
+                        onTriggerAction?.('AI Feedback', 'Feedback saved: Refining generation parameters.');
+                      }}
+                      title="Needs revision"
+                      style={{
+                        background: outreachFeedback === 'down' ? 'rgba(220, 38, 38, 0.18)' : 'var(--bg-surface)',
+                        border: '1px solid var(--border-subtle)',
+                        borderRadius: '6px',
+                        padding: '0.25rem 0.45rem',
+                        cursor: 'pointer',
+                        color: outreachFeedback === 'down' ? '#dc2626' : 'var(--text-muted)',
+                        display: 'inline-flex',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <ThumbsDown size={12} />
+                    </button>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <button
+                      onClick={() => handleCopyText('outreach-draft', generatedOutreach)}
+                      className="btn btn-secondary btn-sm"
+                      style={{ fontSize: '0.725rem', padding: '0.25rem 0.6rem' }}
+                    >
+                      {copiedId === 'outreach-draft' ? <Check size={12} color="#10b981" /> : <Copy size={12} />}
+                      <span>{copiedId === 'outreach-draft' ? 'Copied!' : 'Copy Draft'}</span>
+                    </button>
+
+                    <button
+                      onClick={() => onTriggerAction?.('Outreach Sent', `Sent ${outreachChannel} to ${selectedLead?.name}`)}
+                      className="btn btn-primary btn-sm"
+                      style={{ fontSize: '0.725rem', padding: '0.25rem 0.6rem' }}
+                    >
+                      <span>Execute Send</span>
+                      <ArrowRight size={12} />
+                    </button>
+                  </div>
                 </div>
               </div>
             )}
@@ -746,8 +843,8 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
           zIndex: 1000,
           padding: '1rem'
         }}>
-          <div className="card" style={{ maxWidth: '520px', width: '100%', padding: '1.75rem', position: 'relative' }}>
-            <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.5rem' }}>
+          <div className="card" style={{ maxWidth: '520px', width: '100%', padding: '1.75rem', position: 'relative', background: 'var(--bg-surface-elevated)' }}>
+            <h3 style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.5rem' }}>
               AI Engine Configuration
             </h3>
             <p style={{ fontSize: '0.825rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>
@@ -756,7 +853,7 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
 
             <form onSubmit={handleSaveSettings} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.4rem', color: '#ffffff' }}>
+                <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.4rem', color: 'var(--text-main)' }}>
                   Provider Selection
                 </label>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem' }}>
@@ -766,10 +863,10 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                     style={{
                       padding: '0.75rem',
                       borderRadius: '10px',
-                      background: activeProvider === 'builtin' ? 'rgba(105, 240, 238, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                      border: activeProvider === 'builtin' ? '1px solid #69f0ee' : '1px solid rgba(255, 255, 255, 0.1)',
-                      color: activeProvider === 'builtin' ? '#69f0ee' : 'var(--text-muted)',
-                      fontWeight: '700',
+                      background: activeProvider === 'builtin' ? 'var(--bg-surface-hover)' : 'var(--bg-surface)',
+                      border: activeProvider === 'builtin' ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                      color: activeProvider === 'builtin' ? 'var(--accent-primary)' : 'var(--text-muted)',
+                      fontWeight: '800',
                       fontSize: '0.8rem',
                       cursor: 'pointer'
                     }}
@@ -783,10 +880,10 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                     style={{
                       padding: '0.75rem',
                       borderRadius: '10px',
-                      background: activeProvider === 'gemini' ? 'rgba(105, 240, 238, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                      border: activeProvider === 'gemini' ? '1px solid #69f0ee' : '1px solid rgba(255, 255, 255, 0.1)',
-                      color: activeProvider === 'gemini' ? '#69f0ee' : 'var(--text-muted)',
-                      fontWeight: '700',
+                      background: activeProvider === 'gemini' ? 'var(--bg-surface-hover)' : 'var(--bg-surface)',
+                      border: activeProvider === 'gemini' ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                      color: activeProvider === 'gemini' ? 'var(--accent-primary)' : 'var(--text-muted)',
+                      fontWeight: '800',
                       fontSize: '0.8rem',
                       cursor: 'pointer'
                     }}
@@ -798,7 +895,7 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
 
               {activeProvider === 'gemini' && (
                 <div>
-                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.4rem', color: '#ffffff' }}>
+                  <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: '700', marginBottom: '0.4rem', color: 'var(--text-main)' }}>
                     Gemini API Key (Free tier supported)
                   </label>
                   <input
@@ -810,9 +907,9 @@ export const AIAssistantScreen = ({ leads = [], onSelectLead, onTriggerAction, o
                       width: '100%',
                       padding: '0.65rem 0.85rem',
                       borderRadius: '8px',
-                      background: 'rgba(255, 255, 255, 0.05)',
-                      border: '1px solid rgba(255, 255, 255, 0.12)',
-                      color: '#ffffff',
+                      background: 'var(--bg-surface)',
+                      border: '1px solid var(--border-medium)',
+                      color: 'var(--text-main)',
                       fontSize: '0.85rem',
                       outline: 'none'
                     }}

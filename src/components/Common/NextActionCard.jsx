@@ -38,15 +38,14 @@ export const NextActionCard = ({
           fontSize: '0.8rem',
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
-          color: '#69f0ee',
-          fontWeight: '800',
-          textShadow: '0 0 10px rgba(105, 240, 238, 0.5)'
+          color: 'var(--accent-primary)',
+          fontWeight: '800'
         }}>
           AI Recommendation
         </h4>
       </div>
 
-      <div style={{ fontSize: '1.25rem', fontWeight: '800', color: '#ffffff', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+      <div style={{ fontSize: '1.25rem', fontWeight: '800', color: 'var(--text-main)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
         <span>⚡</span>
         <span>{action}</span>
       </div>
@@ -59,21 +58,21 @@ export const NextActionCard = ({
         marginBottom: '1.25rem',
         padding: '0.75rem 1rem',
         borderRadius: '12px',
-        background: 'rgba(105, 240, 238, 0.04)',
-        border: '1px solid rgba(105, 240, 238, 0.12)',
+        background: 'var(--bg-surface-hover)',
+        border: '1px solid var(--border-subtle)',
         fontSize: '0.825rem'
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span style={{ color: 'var(--text-muted)' }}>Recommended channel</span>
-          <span style={{ fontWeight: '700', color: '#69f0ee' }}>→ {channel}</span>
+          <span style={{ fontWeight: '700', color: 'var(--accent-primary)' }}>→ {channel}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span style={{ color: 'var(--text-muted)' }}>Recommended action</span>
-          <span style={{ fontWeight: '700', color: '#ffffff' }}>→ {recommendedAction}</span>
+          <span style={{ fontWeight: '700', color: 'var(--text-main)' }}>→ {recommendedAction}</span>
         </div>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
           <span style={{ color: 'var(--text-muted)' }}>Confidence</span>
-          <span style={{ fontWeight: '800', color: '#69f0ee', textShadow: '0 0 8px rgba(105, 240, 238, 0.4)' }}>
+          <span className="tabular-nums" style={{ fontWeight: '800', color: 'var(--accent-primary)' }}>
             → {confidence}
           </span>
         </div>
