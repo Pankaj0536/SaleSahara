@@ -199,12 +199,12 @@ export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpe
               top: '48px',
               right: 0,
               width: '340px',
-              background: 'rgba(16, 24, 38, 0.88)',
+              background: 'var(--bg-surface-elevated)',
               backdropFilter: 'blur(24px)',
               WebkitBackdropFilter: 'blur(24px)',
-              border: '1px solid rgba(105, 240, 238, 0.18)',
-              borderRadius: '20px',
-              boxShadow: '0 16px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(105, 240, 238, 0.1)',
+              border: '1px solid var(--border-medium)',
+              borderRadius: '16px',
+              boxShadow: 'var(--shadow-lg)',
               zIndex: 200,
               overflow: 'hidden',
               animation: 'fadeIn 0.2s ease-out'
@@ -214,9 +214,10 @@ export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpe
                 borderBottom: '1px solid var(--border-subtle)',
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between'
+                justifyContent: 'space-between',
+                background: 'var(--bg-surface)'
               }}>
-                <div style={{ fontWeight: '700', fontSize: '0.875rem', color: 'var(--text-main)' }}>
+                <div style={{ fontWeight: '800', fontSize: '0.875rem', color: 'var(--text-main)' }}>
                   Notifications
                 </div>
                 {unreadCount > 0 && (
@@ -225,9 +226,9 @@ export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpe
                     style={{
                       background: 'none',
                       border: 'none',
-                      color: 'var(--accent-cyan)',
+                      color: 'var(--accent-primary)',
                       fontSize: '0.725rem',
-                      fontWeight: '600',
+                      fontWeight: '700',
                       cursor: 'pointer'
                     }}
                   >
@@ -247,27 +248,27 @@ export const Navbar = ({ currentScreen = 'dashboard', onOpenMobileSidebar, onOpe
                     style={{
                       padding: '0.85rem 1rem',
                       borderBottom: '1px solid var(--border-subtle)',
-                      background: item.read ? 'transparent' : 'rgba(79, 70, 229, 0.06)',
+                      background: item.read ? 'transparent' : 'rgba(2, 132, 199, 0.08)',
                       cursor: 'pointer',
                       transition: 'background var(--transition-fast)'
                     }}
                   >
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '0.65rem' }}>
                       {item.type === 'urgent' ? (
-                        <AlertTriangle size={16} color="#ef4444" style={{ marginTop: '2px' }} />
+                        <AlertTriangle size={16} color="#ef4444" style={{ marginTop: '2px', flexShrink: 0 }} />
                       ) : item.type === 'warning' ? (
-                        <Sparkles size={16} color="#ea580c" style={{ marginTop: '2px' }} />
+                        <Sparkles size={16} color="#ea580c" style={{ marginTop: '2px', flexShrink: 0 }} />
                       ) : (
-                        <Info size={16} color="var(--accent-cyan)" style={{ marginTop: '2px' }} />
+                        <Info size={16} color="var(--accent-primary)" style={{ marginTop: '2px', flexShrink: 0 }} />
                       )}
                       <div style={{ flex: 1 }}>
-                        <div style={{ fontSize: '0.825rem', fontWeight: '700', color: 'var(--text-main)' }}>
+                        <div style={{ fontSize: '0.825rem', fontWeight: '800', color: 'var(--text-main)' }}>
                           {item.title}
                         </div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px', lineHeight: '1.4' }}>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px', lineHeight: '1.4', fontWeight: '500' }}>
                           {item.message}
                         </div>
-                        <div style={{ fontSize: '0.675rem', color: 'var(--text-dim)', marginTop: '4px' }}>
+                        <div style={{ fontSize: '0.675rem', color: 'var(--text-dim)', marginTop: '4px', fontWeight: '600' }}>
                           {item.time}
                         </div>
                       </div>

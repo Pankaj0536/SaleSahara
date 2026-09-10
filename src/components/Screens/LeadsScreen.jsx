@@ -15,42 +15,129 @@ import {
   ArrowDown,
   SlidersHorizontal,
   Mail,
-  Check
+  Check,
+  RotateCcw,
+  Eye,
+  EyeOff,
+  Layers
 } from 'lucide-react';
 import { PriorityBadge } from '../Common/PriorityBadge';
 
-export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTriggerAction }) => {
+const DEFAULT_FALLBACK_COLUMNS = [
+  { id: 'name', label: 'Lead Name', visible: true, sortable: true, isCore: true },
+  { id: 'company', label: 'Company', visible: true, sortable: true, isCore: true },
+  { id: 'source', label: 'Source', visible: true, sortable: false, isCore: true },
+  { id: 'industry', label: 'Industry', visible: true, sortable: false, isCore: true },
+  { id: 'probability', label: 'Propensity', visible: true, sortable: true, isCore: true },
+  { id: 'priority', label: 'Priority', visible: true, sortable: false, isCore: true },
+  { id: 'status', label: 'Status', visible: true, sortable: false, isCore: true },
+  { id: 'lastContact', label: 'Last Touch', visible: true, sortable: true, isCore: true },
+  { id: 'nextAction', label: 'Next Action', visible: true, sortable: false, isCore: true }
+];
+
+export const LeadsScreen = ({
+  leads = [],
+  columns = [],
+  onUpdateColumns,
+  onAddColumn,
+  onSelectLead,
+  onOpenAddLeadModal,
+  onTriggerAction
+}) => {
   const [search, setSearch] = useState('');
   const [selectedSource, setSelectedSource] = useState('ALL');
   const [selectedPriority, setSelectedPriority] = useState('ALL');
   const [selectedStatus, setSelectedStatus] = useState('ALL');
-  const [sortBy, setSortBy] = useState('probability-desc');
+  const [sortCol, setSortCol] = useState('probability');
+  const [sortOrder, setSortOrder] = useState('desc'); // 'asc' | 'desc'
   const [density, setDensity] = useState('normal'); // 'compact' | 'normal' | 'spacious'
   const [selectedLeadIds, setSelectedLeadIds] = useState([]);
+  const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
+  const [newColumnName, setNewColumnName] = useState('');
 
-  // Multi-Filter & Search Logic
+  // Active columns fallback
+  const activeCols = columns && columns.length > 0 ? columns : DEFAULT_FALLBACK_COLUMNS;
+  const visibleCols = activeCols.filter(c => c.visible);
+
+  // Toggle single column visibility
+  const toggleColumnVisibility = (colId) => {
+    if (!onUpdateColumns) return;
+    const updated = activeCols.map(col =>
+      col.id === colId ? { ...col, visible: !col.visible } : col
+    );
+    onUpdateColumns(updated);
+  };
+
+  // Show all columns
+  const handleShowAllColumns = () => {
+    if (!onUpdateColumns) return;
+    onUpdateColumns(activeCols.map(c => ({ ...c, visible: true })));
+  };
+
+  // Reset to default columns
+  const handleResetColumns = () => {
+    if (!onUpdateColumns) return;
+    onUpdateColumns(DEFAULT_FALLBACK_COLUMNS);
+  };
+
+  // Add custom column
+  const handleCreateCustomColumn = (e) => {
+    e.preventDefault();
+    if (!newColumnName.trim()) return;
+    onAddColumn?.({ label: newColumnName.trim() });
+    setNewColumnName('');
+  };
+
+  // Dynamic sorting handler
+  const handleSortToggle = (columnId) => {
+    if (sortCol === columnId) {
+      setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortCol(columnId);
+      setSortOrder('desc');
+    }
+  };
+
+  // Multi-Filter & Dynamic Search Logic
   const filteredLeads = leads.filter(l => {
-    const matchesSearch = l.name.toLowerCase().includes(search.toLowerCase()) ||
-                          l.company.toLowerCase().includes(search.toLowerCase()) ||
-                          l.industry.toLowerCase().includes(search.toLowerCase());
+    const searchLower = search.toLowerCase();
+    const matchesSearch =
+      (l.name && l.name.toLowerCase().includes(searchLower)) ||
+      (l.company && l.company.toLowerCase().includes(searchLower)) ||
+      (l.industry && l.industry.toLowerCase().includes(searchLower)) ||
+      (l.role && l.role.toLowerCase().includes(searchLower)) ||
+      (l.email && l.email.toLowerCase().includes(searchLower));
+
     const matchesSource = selectedSource === 'ALL' || l.source === selectedSource;
     const matchesPriority = selectedPriority === 'ALL' || l.priority === selectedPriority;
     const matchesStatus = selectedStatus === 'ALL' || l.status === selectedStatus;
+
     return matchesSearch && matchesSource && matchesPriority && matchesStatus;
   }).sort((a, b) => {
-    if (sortBy === 'probability-desc') return b.probability - a.probability;
-    if (sortBy === 'probability-asc') return a.probability - b.probability;
-    if (sortBy === 'name-asc') return a.name.localeCompare(b.name);
-    if (sortBy === 'name-desc') return b.name.localeCompare(a.name);
-    if (sortBy === 'company-asc') return a.company.localeCompare(b.company);
-    if (sortBy === 'company-desc') return b.company.localeCompare(a.company);
-    return 0;
+    let valA = a[sortCol] ?? a[sortCol.replace(/_/g, ' ')] ?? '';
+    let valB = b[sortCol] ?? b[sortCol.replace(/_/g, ' ')] ?? '';
+
+    // Handle currency / numbers
+    if (typeof valA === 'string' && valA.startsWith('$')) {
+      valA = parseFloat(valA.replace(/[^0-9.-]+/g, '')) || 0;
+    }
+    if (typeof valB === 'string' && valB.startsWith('$')) {
+      valB = parseFloat(valB.replace(/[^0-9.-]+/g, '')) || 0;
+    }
+
+    if (typeof valA === 'number' && typeof valB === 'number') {
+      return sortOrder === 'asc' ? valA - valB : valB - valA;
+    }
+
+    const strA = String(valA).toLowerCase();
+    const strB = String(valB).toLowerCase();
+    return sortOrder === 'asc' ? strA.localeCompare(strB) : strB.localeCompare(strA);
   });
 
   // Toggle single row selection
   const toggleSelectLead = (id, e) => {
     e.stopPropagation();
-    setSelectedLeadIds(prev => 
+    setSelectedLeadIds(prev =>
       prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
     );
   };
@@ -64,38 +151,23 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
     }
   };
 
-  // Header Sort Toggle
-  const handleSortToggle = (col) => {
-    if (col === 'probability') {
-      setSortBy(prev => prev === 'probability-desc' ? 'probability-asc' : 'probability-desc');
-    } else if (col === 'name') {
-      setSortBy(prev => prev === 'name-asc' ? 'name-desc' : 'name-asc');
-    } else if (col === 'company') {
-      setSortBy(prev => prev === 'company-asc' ? 'company-desc' : 'company-asc');
-    }
-  };
-
-  // Export selected to CSV
+  // Dynamic CSV Export (Respects visible columns)
   const handleExportCSV = () => {
-    const targetLeads = selectedLeadIds.length > 0 
+    const targetLeads = selectedLeadIds.length > 0
       ? leads.filter(l => selectedLeadIds.includes(l.id))
       : filteredLeads;
 
-    const headers = ['ID', 'Name', 'Email', 'Company', 'Industry', 'Source', 'Probability', 'Priority', 'Status', 'Last Contact'];
-    const rows = targetLeads.map(l => [
-      l.id,
-      `"${l.name}"`,
-      `"${l.email}"`,
-      `"${l.company}"`,
-      `"${l.industry}"`,
-      `"${l.source}"`,
-      l.probability,
-      l.priority,
-      `"${l.status}"`,
-      `"${l.lastContact}"`
-    ]);
+    const headers = ['ID', ...visibleCols.map(c => c.label)];
+    const rows = targetLeads.map(l => {
+      const cells = [l.id];
+      visibleCols.forEach(col => {
+        let val = l[col.id] ?? l[col.label] ?? l[col.id.replace(/_/g, ' ')] ?? '';
+        cells.push(`"${String(val).replace(/"/g, '""')}"`);
+      });
+      return cells.join(',');
+    });
 
-    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement('a');
     link.setAttribute('href', encodedUri);
@@ -104,7 +176,179 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
     link.click();
     document.body.removeChild(link);
 
-    onTriggerAction('Export CSV', `Exported ${targetLeads.length} leads to CSV successfully.`);
+    onTriggerAction('Export CSV', `Exported ${targetLeads.length} leads with ${visibleCols.length} dynamic columns to CSV.`);
+  };
+
+  // Adaptive Cell Renderer for core and arbitrary Excel attributes
+  const renderCellContent = (col, item) => {
+    const colId = col.id;
+
+    if (colId === 'name') {
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+          <div style={{
+            width: '28px',
+            height: '28px',
+            borderRadius: '8px',
+            background: 'rgba(2, 132, 199, 0.12)',
+            color: 'var(--accent-primary)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.75rem',
+            fontWeight: '800',
+            flexShrink: 0
+          }}>
+            {item.name ? item.name.charAt(0).toUpperCase() : 'P'}
+          </div>
+          <div>
+            <div style={{ fontWeight: '700', color: 'var(--text-main)', fontSize: '0.85rem' }}>{item.name}</div>
+            {item.email && <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>{item.email}</div>}
+          </div>
+        </div>
+      );
+    }
+
+    if (colId === 'company') {
+      return (
+        <div>
+          <div style={{ fontWeight: '600', color: 'var(--text-main)', fontSize: '0.85rem' }}>{item.company}</div>
+          {item.companySize && <div style={{ fontSize: '0.725rem', color: 'var(--text-dim)' }}>{item.companySize} emp.</div>}
+        </div>
+      );
+    }
+
+    if (colId === 'probability' || colId === 'propensity') {
+      const score = Number(item.probability) || 0;
+      return (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <div style={{
+            width: '42px',
+            height: '6px',
+            borderRadius: '3px',
+            background: 'var(--border-medium)',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              width: `${score}%`,
+              height: '100%',
+              background: score >= 80 ? 'linear-gradient(90deg, #dc2626, #ea580c)' : 'linear-gradient(90deg, #4f46e5, #0284c7)'
+            }} />
+          </div>
+          <span className="tabular-nums" style={{
+            fontWeight: '800',
+            fontSize: '0.875rem',
+            color: score >= 80 ? '#dc2626' : 'var(--text-main)'
+          }}>
+            {score}%
+          </span>
+        </div>
+      );
+    }
+
+    if (colId === 'priority') {
+      return <PriorityBadge priority={item.priority} />;
+    }
+
+    if (colId === 'status') {
+      return (
+        <span style={{
+          fontSize: '0.75rem',
+          fontWeight: '700',
+          padding: '0.2rem 0.5rem',
+          borderRadius: '6px',
+          background: item.status === 'Qualified' ? 'rgba(5, 150, 105, 0.12)' : 'var(--bg-surface-hover)',
+          color: item.status === 'Qualified' ? '#059669' : 'var(--text-muted)',
+          border: '1px solid var(--border-subtle)'
+        }}>
+          {item.status}
+        </span>
+      );
+    }
+
+    if (colId === 'lastContact') {
+      return (
+        <span className="tabular-nums" style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
+          {item.lastContact || '—'}
+        </span>
+      );
+    }
+
+    if (colId === 'nextAction') {
+      return (
+        <button
+          className="btn btn-secondary btn-sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onTriggerAction(item.nextAction, `Executing: ${item.nextAction} for ${item.name}`);
+          }}
+          style={{ fontSize: '0.725rem', padding: '0.25rem 0.55rem', whiteSpace: 'nowrap' }}
+        >
+          {item.nextAction || 'Contact'}
+        </button>
+      );
+    }
+
+    // Dynamic / Excel Custom Column Value Extractor
+    const rawVal = item[colId] ?? item[col.label] ?? item[colId.replace(/_/g, ' ')] ?? item[col.label?.toLowerCase()] ?? '—';
+    const strVal = String(rawVal);
+
+    // Formatted currency (e.g. $85,000, Deal Value, ARR)
+    if (strVal.startsWith('$') || colId.includes('deal') || colId.includes('budget') || colId.includes('arr')) {
+      return (
+        <span className="tabular-nums" style={{
+          fontWeight: '700',
+          fontSize: '0.825rem',
+          color: '#059669',
+          background: 'rgba(5, 150, 105, 0.08)',
+          padding: '0.15rem 0.45rem',
+          borderRadius: '4px',
+          border: '1px solid rgba(5, 150, 105, 0.2)'
+        }}>
+          {strVal}
+        </span>
+      );
+    }
+
+    // Role or Title badge
+    if (colId.includes('role') || colId.includes('title')) {
+      return (
+        <span style={{
+          fontSize: '0.775rem',
+          fontWeight: '600',
+          color: 'var(--text-main)',
+          background: 'var(--bg-surface-hover)',
+          padding: '0.2rem 0.5rem',
+          borderRadius: '6px',
+          border: '1px solid var(--border-subtle)'
+        }}>
+          {strVal}
+        </span>
+      );
+    }
+
+    // Country or Region badge
+    if (colId.includes('country') || colId.includes('region')) {
+      return (
+        <span style={{
+          fontSize: '0.775rem',
+          fontWeight: '600',
+          color: 'var(--accent-primary)',
+          background: 'rgba(2, 132, 199, 0.08)',
+          padding: '0.2rem 0.5rem',
+          borderRadius: '6px',
+          border: '1px solid rgba(2, 132, 199, 0.2)'
+        }}>
+          {strVal}
+        </span>
+      );
+    }
+
+    return (
+      <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+        {strVal}
+      </span>
+    );
   };
 
   const hasActiveFilters = search || selectedSource !== 'ALL' || selectedPriority !== 'ALL' || selectedStatus !== 'ALL';
@@ -130,13 +374,46 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
             }}>
               {filteredLeads.length} of {leads.length} Active
             </span>
+            <span style={{
+              fontSize: '0.75rem',
+              fontWeight: '700',
+              padding: '0.2rem 0.6rem',
+              borderRadius: '9999px',
+              background: 'rgba(5, 150, 105, 0.1)',
+              color: '#059669',
+              border: '1px solid rgba(5, 150, 105, 0.25)'
+            }}>
+              {visibleCols.length} Columns Active
+            </span>
           </div>
           <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-            AI-prioritized prospects ranked by conversion propensity and buying intent signals.
+            AI-prioritized prospects with dynamic entity schema and adaptive Excel attribute mapping.
           </p>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', flexWrap: 'wrap' }}>
+          
+          {/* Customize Columns Button */}
+          <button
+            className="btn btn-secondary"
+            onClick={() => setIsColumnModalOpen(true)}
+            title="Configure table columns and entity attributes"
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}
+          >
+            <SlidersHorizontal size={15} color="var(--accent-primary)" />
+            <span>Customize Columns</span>
+            <span style={{
+              fontSize: '0.7rem',
+              fontWeight: '800',
+              padding: '0.1rem 0.4rem',
+              borderRadius: '9999px',
+              background: 'rgba(2, 132, 199, 0.15)',
+              color: 'var(--accent-primary)'
+            }}>
+              {visibleCols.length}/{activeCols.length}
+            </span>
+          </button>
+
           {/* View Density Switcher */}
           <div style={{
             display: 'flex',
@@ -200,11 +477,13 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
             </button>
           </div>
 
-          <button className="btn btn-secondary" onClick={handleExportCSV} title="Export directory as CSV">
+          {/* Export Visible Columns */}
+          <button className="btn btn-secondary" onClick={handleExportCSV} title="Export active directory as CSV">
             <Download size={15} />
             <span>Export</span>
           </button>
 
+          {/* Add Lead */}
           <button className="btn btn-primary" onClick={onOpenAddLeadModal}>
             <Plus size={16} />
             <span>Add Lead</span>
@@ -220,7 +499,7 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
               <Search size={16} color="var(--accent-primary)" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
               <input
                 type="text"
-                placeholder="Search leads by prospect name, company, or domain..."
+                placeholder="Search leads by prospect name, company, domain, role..."
                 className="form-input"
                 style={{ paddingLeft: '2.35rem', height: '40px' }}
                 value={search}
@@ -248,81 +527,79 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
 
           <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.65rem' }}>
             {/* Source Filter */}
-            <select className="form-select" style={{ width: 'auto', height: '40px' }} value={selectedSource} onChange={(e) => setSelectedSource(e.target.value)}>
-              <option value="ALL">All Sources</option>
+            <select
+              className="form-input"
+              value={selectedSource}
+              onChange={(e) => setSelectedSource(e.target.value)}
+              style={{ width: 'auto', height: '40px', fontSize: '0.825rem' }}
+            >
+              <option value="ALL">All Inbound Sources</option>
               <option value="Inbound Demo">Inbound Demo</option>
               <option value="Partner Referral">Partner Referral</option>
+              <option value="Product Qualified Lead">Product Qualified Lead</option>
               <option value="Webinar Attendee">Webinar Attendee</option>
-              <option value="Google Organic Search">Google Organic</option>
-              <option value="Outbound Email">Outbound Email</option>
+              <option value="Outbound SDR">Outbound SDR</option>
             </select>
 
             {/* Priority Filter */}
-            <select className="form-select" style={{ width: 'auto', height: '40px' }} value={selectedPriority} onChange={(e) => setSelectedPriority(e.target.value)}>
+            <select
+              className="form-input"
+              value={selectedPriority}
+              onChange={(e) => setSelectedPriority(e.target.value)}
+              style={{ width: 'auto', height: '40px', fontSize: '0.825rem' }}
+            >
               <option value="ALL">All Priorities</option>
-              <option value="VERY HIGH">VERY HIGH</option>
-              <option value="HIGH">HIGH</option>
-              <option value="MEDIUM">MEDIUM</option>
-              <option value="LOW">LOW</option>
+              <option value="VERY HIGH">Very High Priority</option>
+              <option value="HIGH">High Priority</option>
+              <option value="MEDIUM">Medium Priority</option>
+              <option value="LOW">Low Priority</option>
             </select>
 
             {/* Status Filter */}
-            <select className="form-select" style={{ width: 'auto', height: '40px' }} value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)}>
-              <option value="ALL">All Statuses</option>
+            <select
+              className="form-input"
+              value={selectedStatus}
+              onChange={(e) => setSelectedStatus(e.target.value)}
+              style={{ width: 'auto', height: '40px', fontSize: '0.825rem' }}
+            >
+              <option value="ALL">All Stages</option>
               <option value="Qualified">Qualified</option>
-              <option value="In Discussion">In Discussion</option>
+              <option value="Discovery">Discovery</option>
               <option value="Demo Scheduled">Demo Scheduled</option>
-              <option value="Nurturing">Nurturing</option>
+              <option value="Negotiation">Negotiation</option>
               <option value="Contacted">Contacted</option>
-              <option value="At Risk">At Risk</option>
-            </select>
-
-            {/* Sort Selector */}
-            <select className="form-select" style={{ width: 'auto', height: '40px' }} value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
-              <option value="probability-desc">Probability (High → Low)</option>
-              <option value="probability-asc">Probability (Low → High)</option>
-              <option value="name-asc">Name (A → Z)</option>
-              <option value="name-desc">Name (Z → A)</option>
-              <option value="company-asc">Company (A → Z)</option>
             </select>
           </div>
         </div>
 
-        {/* Active Filter Chips Bar */}
+        {/* Active Filter Indicators */}
         {hasActiveFilters && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', paddingTop: '0.25rem', borderTop: '1px solid var(--border-subtle)' }}>
-            <span style={{ fontSize: '0.725rem', fontWeight: '700', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
-              Active Filters:
-            </span>
-
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+            <span style={{ fontSize: '0.75rem', fontWeight: '700', color: 'var(--text-muted)' }}>Active Filters:</span>
             {search && (
-              <span className="filter-chip">
-                Search: "{search}"
-                <X size={12} style={{ cursor: 'pointer' }} onClick={() => setSearch('')} />
+              <span className="badge" style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-main)', fontSize: '0.725rem' }}>
+                Query: "{search}"
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '4px' }} onClick={() => setSearch('')} />
               </span>
             )}
-
             {selectedSource !== 'ALL' && (
-              <span className="filter-chip">
+              <span className="badge" style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-main)', fontSize: '0.725rem' }}>
                 Source: {selectedSource}
-                <X size={12} style={{ cursor: 'pointer' }} onClick={() => setSelectedSource('ALL')} />
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '4px' }} onClick={() => setSelectedSource('ALL')} />
               </span>
             )}
-
             {selectedPriority !== 'ALL' && (
-              <span className="filter-chip">
+              <span className="badge" style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-main)', fontSize: '0.725rem' }}>
                 Priority: {selectedPriority}
-                <X size={12} style={{ cursor: 'pointer' }} onClick={() => setSelectedPriority('ALL')} />
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '4px' }} onClick={() => setSelectedPriority('ALL')} />
               </span>
             )}
-
             {selectedStatus !== 'ALL' && (
-              <span className="filter-chip">
+              <span className="badge" style={{ background: 'var(--bg-surface-hover)', color: 'var(--text-main)', fontSize: '0.725rem' }}>
                 Status: {selectedStatus}
-                <X size={12} style={{ cursor: 'pointer' }} onClick={() => setSelectedStatus('ALL')} />
+                <X size={12} style={{ cursor: 'pointer', marginLeft: '4px' }} onClick={() => setSelectedStatus('ALL')} />
               </span>
             )}
-
             <button
               onClick={() => {
                 setSearch('');
@@ -333,9 +610,9 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
               style={{
                 background: 'none',
                 border: 'none',
-                fontSize: '0.725rem',
-                color: 'var(--text-dim)',
-                textDecoration: 'underline',
+                color: 'var(--accent-primary)',
+                fontSize: '0.75rem',
+                fontWeight: '700',
                 cursor: 'pointer',
                 marginLeft: '0.25rem'
               }}
@@ -346,7 +623,7 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
         )}
       </div>
 
-      {/* Main Directory Table with Sticky Glass Headers */}
+      {/* Main Directory Table with Dynamic Columns and Sticky Glass Headers */}
       <div className="table-container" style={{ maxHeight: 'calc(100vh - 280px)', overflowY: 'auto', position: 'relative' }}>
         <table className={`custom-table density-${density}`}>
           <thead>
@@ -359,49 +636,52 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
                   style={{ cursor: 'pointer', accentColor: 'var(--accent-primary)', width: '15px', height: '15px' }}
                 />
               </th>
-              <th onClick={() => handleSortToggle('name')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span>Lead Name</span>
-                  {sortBy.startsWith('name') ? (
-                    sortBy === 'name-asc' ? <ArrowUp size={14} color="var(--accent-primary)" /> : <ArrowDown size={14} color="var(--accent-primary)" />
-                  ) : (
-                    <ArrowUpDown size={12} color="var(--text-dim)" />
-                  )}
-                </div>
-              </th>
-              <th onClick={() => handleSortToggle('company')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span>Company</span>
-                  {sortBy.startsWith('company') ? (
-                    sortBy === 'company-asc' ? <ArrowUp size={14} color="var(--accent-primary)" /> : <ArrowDown size={14} color="var(--accent-primary)" />
-                  ) : (
-                    <ArrowUpDown size={12} color="var(--text-dim)" />
-                  )}
-                </div>
-              </th>
-              <th>Source</th>
-              <th>Industry</th>
-              <th onClick={() => handleSortToggle('probability')} style={{ cursor: 'pointer', userSelect: 'none' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                  <span>Propensity</span>
-                  {sortBy.startsWith('probability') ? (
-                    sortBy === 'probability-desc' ? <ArrowDown size={14} color="var(--accent-primary)" /> : <ArrowUp size={14} color="var(--accent-primary)" />
-                  ) : (
-                    <ArrowUpDown size={12} color="var(--text-dim)" />
-                  )}
-                </div>
-              </th>
-              <th>Priority</th>
-              <th>Status</th>
-              <th>Last Touch</th>
-              <th>Next Action</th>
+
+              {/* Dynamic Column Headers */}
+              {visibleCols.map(col => {
+                const isCurrentlySorted = sortCol === col.id;
+                return (
+                  <th
+                    key={col.id}
+                    onClick={() => handleSortToggle(col.id)}
+                    style={{ cursor: 'pointer', userSelect: 'none', whiteSpace: 'nowrap' }}
+                    title={`Click to sort by ${col.label}`}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <span>{col.label}</span>
+                      {col.isCustom && (
+                        <span style={{
+                          fontSize: '0.625rem',
+                          padding: '0.1rem 0.3rem',
+                          borderRadius: '4px',
+                          background: 'rgba(2, 132, 199, 0.1)',
+                          color: 'var(--accent-primary)',
+                          fontWeight: '800'
+                        }}>
+                          Custom
+                        </span>
+                      )}
+                      {isCurrentlySorted ? (
+                        sortOrder === 'asc' ? (
+                          <ArrowUp size={13} color="var(--accent-primary)" />
+                        ) : (
+                          <ArrowDown size={13} color="var(--accent-primary)" />
+                        )
+                      ) : (
+                        <ArrowUpDown size={11} color="var(--text-dim)" />
+                      )}
+                    </div>
+                  </th>
+                );
+              })}
+
               <th style={{ width: '32px' }}></th>
             </tr>
           </thead>
           <tbody>
             {filteredLeads.length === 0 ? (
               <tr>
-                <td colSpan={11} style={{ textAlign: 'center', padding: '3.5rem', color: 'var(--text-muted)' }}>
+                <td colSpan={visibleCols.length + 2} style={{ textAlign: 'center', padding: '3.5rem', color: 'var(--text-muted)' }}>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem' }}>
                     <Search size={32} color="var(--text-dim)" />
                     <div style={{ fontWeight: '700', fontSize: '1rem', color: 'var(--text-main)' }}>No matching leads found</div>
@@ -422,6 +702,7 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
                       transition: 'background var(--transition-fast)'
                     }}
                   >
+                    {/* Checkbox */}
                     <td style={{ textAlign: 'center' }} onClick={(e) => toggleSelectLead(item.id, e)}>
                       <input
                         type="checkbox"
@@ -430,75 +711,15 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
                         style={{ cursor: 'pointer', accentColor: 'var(--accent-primary)', width: '15px', height: '15px' }}
                       />
                     </td>
-                    <td>
-                      <div style={{ fontWeight: '700', color: 'var(--text-main)' }}>{item.name}</div>
-                      <div style={{ fontSize: '0.725rem', color: 'var(--text-muted)' }}>{item.email}</div>
-                    </td>
-                    <td>
-                      <div style={{ fontWeight: '600', color: 'var(--text-main)' }}>{item.company}</div>
-                      <div style={{ fontSize: '0.725rem', color: 'var(--text-dim)' }}>{item.companySize} emp.</div>
-                    </td>
-                    <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                      {item.source}
-                    </td>
-                    <td style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                      {item.industry}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                        <div style={{
-                          width: '42px',
-                          height: '6px',
-                          borderRadius: '3px',
-                          background: 'var(--border-medium)',
-                          overflow: 'hidden'
-                        }}>
-                          <div style={{
-                            width: `${item.probability}%`,
-                            height: '100%',
-                            background: item.probability >= 80 ? 'linear-gradient(90deg, #dc2626, #ea580c)' : 'linear-gradient(90deg, #4f46e5, #0284c7)'
-                          }} />
-                        </div>
-                        <span className="tabular-nums" style={{
-                          fontWeight: '800',
-                          fontSize: '0.875rem',
-                          color: item.probability >= 80 ? '#dc2626' : 'var(--text-main)'
-                        }}>
-                          {item.probability}%
-                        </span>
-                      </div>
-                    </td>
-                    <td>
-                      <PriorityBadge priority={item.priority} />
-                    </td>
-                    <td>
-                      <span style={{
-                        fontSize: '0.75rem',
-                        fontWeight: '700',
-                        padding: '0.2rem 0.5rem',
-                        borderRadius: '6px',
-                        background: item.status === 'Qualified' ? 'rgba(5, 150, 105, 0.12)' : 'var(--bg-surface-hover)',
-                        color: item.status === 'Qualified' ? '#059669' : 'var(--text-muted)',
-                        border: '1px solid var(--border-subtle)'
-                      }}>
-                        {item.status}
-                      </span>
-                    </td>
-                    <td className="tabular-nums" style={{ fontSize: '0.8rem', color: 'var(--text-dim)' }}>
-                      {item.lastContact}
-                    </td>
-                    <td>
-                      <button
-                        className="btn btn-secondary btn-sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onTriggerAction(item.nextAction, `Executing: ${item.nextAction} for ${item.name}`);
-                        }}
-                        style={{ fontSize: '0.725rem', padding: '0.25rem 0.55rem', whiteSpace: 'nowrap' }}
-                      >
-                        {item.nextAction}
-                      </button>
-                    </td>
+
+                    {/* Dynamic Cells */}
+                    {visibleCols.map(col => (
+                      <td key={col.id}>
+                        {renderCellContent(col, item)}
+                      </td>
+                    ))}
+
+                    {/* Action Chevron */}
                     <td>
                       <ChevronRight size={16} color="var(--text-dim)" />
                     </td>
@@ -581,6 +802,183 @@ export const LeadsScreen = ({ leads, onSelectLead, onOpenAddLeadModal, onTrigger
           >
             <X size={16} />
           </button>
+        </div>
+      )}
+
+      {/* Column Customizer Modal */}
+      {isColumnModalOpen && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(15, 23, 42, 0.45)',
+          backdropFilter: 'blur(6px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9999,
+          padding: '1.5rem'
+        }}>
+          <div className="card animate-scale-in" style={{
+            width: '100%',
+            maxWidth: '540px',
+            maxHeight: '90vh',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '1.25rem',
+            padding: '1.75rem',
+            background: 'var(--bg-surface)',
+            border: '1px solid var(--border-medium)',
+            boxShadow: 'var(--shadow-xl)',
+            borderRadius: 'var(--radius-xl)'
+          }}>
+            {/* Modal Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                <div style={{
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
+                  background: 'rgba(2, 132, 199, 0.12)',
+                  color: 'var(--accent-primary)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center'
+                }}>
+                  <SlidersHorizontal size={20} />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.2rem', fontWeight: '800', color: 'var(--text-main)', letterSpacing: '-0.01em' }}>
+                    Customize Table Attributes
+                  </h3>
+                  <p style={{ fontSize: '0.775rem', color: 'var(--text-muted)' }}>
+                    Control visible entity columns or add custom attributes
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsColumnModalOpen(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  padding: '0.25rem',
+                  borderRadius: '6px'
+                }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Quick Actions Bar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0.75rem', background: 'var(--bg-surface-hover)', borderRadius: 'var(--radius-md)' }}>
+              <span style={{ fontSize: '0.775rem', fontWeight: '700', color: 'var(--text-muted)' }}>
+                {visibleCols.length} of {activeCols.length} visible
+              </span>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button
+                  type="button"
+                  onClick={handleShowAllColumns}
+                  className="btn btn-secondary btn-sm"
+                  style={{ fontSize: '0.725rem', padding: '0.2rem 0.5rem' }}
+                >
+                  <Eye size={12} />
+                  <span>Show All</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleResetColumns}
+                  className="btn btn-secondary btn-sm"
+                  style={{ fontSize: '0.725rem', padding: '0.2rem 0.5rem' }}
+                >
+                  <RotateCcw size={12} />
+                  <span>Reset Defaults</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Column Toggles List */}
+            <div style={{ maxHeight: '280px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.4rem', paddingRight: '4px' }}>
+              {activeCols.map(col => (
+                <div
+                  key={col.id}
+                  onClick={() => toggleColumnVisibility(col.id)}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0.65rem 0.85rem',
+                    borderRadius: 'var(--radius-md)',
+                    background: col.visible ? 'var(--bg-surface)' : 'var(--bg-surface-hover)',
+                    border: `1px solid ${col.visible ? 'var(--accent-primary)' : 'var(--border-subtle)'}`,
+                    cursor: 'pointer',
+                    transition: 'all var(--transition-fast)'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                    <input
+                      type="checkbox"
+                      checked={col.visible}
+                      onChange={() => toggleColumnVisibility(col.id)}
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ cursor: 'pointer', accentColor: 'var(--accent-primary)', width: '16px', height: '16px' }}
+                    />
+                    <span style={{ fontSize: '0.85rem', fontWeight: col.visible ? '700' : '500', color: col.visible ? 'var(--text-main)' : 'var(--text-muted)' }}>
+                      {col.label}
+                    </span>
+                  </div>
+
+                  <span style={{
+                    fontSize: '0.675rem',
+                    fontWeight: '800',
+                    padding: '0.15rem 0.45rem',
+                    borderRadius: '4px',
+                    background: col.isCustom ? 'rgba(2, 132, 199, 0.12)' : 'var(--bg-surface-hover)',
+                    color: col.isCustom ? 'var(--accent-primary)' : 'var(--text-dim)',
+                    border: '1px solid var(--border-subtle)'
+                  }}>
+                    {col.isCustom ? 'Dynamic / Excel' : 'Core'}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Add Custom Column Section */}
+            <form onSubmit={handleCreateCustomColumn} style={{ display: 'flex', gap: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+              <input
+                type="text"
+                placeholder="Add custom attribute (e.g. ARR, Country, Decision Date)..."
+                className="form-input"
+                style={{ flex: 1, fontSize: '0.825rem', height: '38px' }}
+                value={newColumnName}
+                onChange={(e) => setNewColumnName(e.target.value)}
+              />
+              <button
+                type="submit"
+                className="btn btn-primary btn-sm"
+                disabled={!newColumnName.trim()}
+                style={{ whiteSpace: 'nowrap', height: '38px', padding: '0 0.85rem' }}
+              >
+                <Plus size={15} />
+                <span>Add Attribute</span>
+              </button>
+            </form>
+
+            {/* Modal Footer */}
+            <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '0.5rem', borderTop: '1px solid var(--border-subtle)' }}>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={() => setIsColumnModalOpen(false)}
+                style={{ width: '100%' }}
+              >
+                Done & Apply Changes
+              </button>
+            </div>
+          </div>
         </div>
       )}
 

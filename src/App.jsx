@@ -57,9 +57,37 @@ export default function App() {
     showToast(`Switched to ${nextTheme === 'light' ? 'Light' : 'Dark'} Mode`, 'info');
   };
 
+  // Dynamic Columns Definition (Customizable & Adaptive to Excel/CSV)
+  const DEFAULT_COLUMNS = [
+    { id: 'name', label: 'Lead Name', visible: true, sortable: true, isCore: true },
+    { id: 'company', label: 'Company', visible: true, sortable: true, isCore: true },
+    { id: 'source', label: 'Source', visible: true, sortable: false, isCore: true },
+    { id: 'industry', label: 'Industry', visible: true, sortable: false, isCore: true },
+    { id: 'probability', label: 'Propensity', visible: true, sortable: true, isCore: true },
+    { id: 'priority', label: 'Priority', visible: true, sortable: false, isCore: true },
+    { id: 'status', label: 'Status', visible: true, sortable: false, isCore: true },
+    { id: 'lastContact', label: 'Last Touch', visible: true, sortable: true, isCore: true },
+    { id: 'nextAction', label: 'Next Action', visible: true, sortable: false, isCore: true }
+  ];
+
   // Data state
   const [leads, setLeads] = useState(INITIAL_LEADS);
   const [selectedLead, setSelectedLead] = useState(INITIAL_LEADS[0]);
+  const [tableColumns, setTableColumns] = useState(DEFAULT_COLUMNS);
+
+  const handleAddColumn = (newCol) => {
+    const colId = newCol.id || newCol.label.toLowerCase().trim().replace(/\s+/g, '_');
+    const colDef = {
+      id: colId,
+      label: newCol.label,
+      visible: true,
+      sortable: false,
+      isCore: false,
+      isCustom: true
+    };
+    setTableColumns(prev => [...prev, colDef]);
+    showToast(`Added custom attribute "${newCol.label}" to table!`, 'success');
+  };
   
   // Fetch real leads from Node.js Express Gateway if available
   useEffect(() => {
@@ -82,21 +110,36 @@ export default function App() {
   const [toast, setToast] = useState(null);
 
   const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, 3500);
+    setToast({ message, type, id: Date.now() });
   };
 
+  // Lead Actions
   const handleSelectLead = (lead) => {
     setSelectedLead(lead);
     setCurrentScreen('lead-details');
   };
 
-  const handleAddLead = async (newLead) => {
+  const handleAddLead = async (formData) => {
+    const newLead = {
+      id: `lead-${Date.now()}`,
+      name: formData.name || 'New Prospect',
+      email: formData.email || '',
+      company: formData.company || 'Enterprise Inc',
+      companySize: formData.companySize || '100-500',
+      role: formData.role || 'Decision Maker',
+      industry: formData.industry || 'Technology',
+      source: formData.source || 'Inbound Demo',
+      budget: formData.budget || '$50,000',
+      probability: Math.floor(Math.random() * 25) + 70,
+      priority: 'HIGH',
+      status: 'Qualified',
+      lastContact: 'Just now',
+      nextAction: 'Schedule Discovery Call'
+    };
+
     try {
       const created = await api.createLead(newLead);
-      setLeads(prev => [created, ...prev]);
+      setLeads([created, ...leads]);
       setSelectedLead(created);
       setCurrentScreen('lead-details');
       showToast(`Lead "${created.name}" added & scored successfully!`);
@@ -112,8 +155,31 @@ export default function App() {
     showToast(`${actionName}: ${details}`);
   };
 
-  const handleImportComplete = (count) => {
-    showToast(`Imported ${count} lead records successfully!`, 'success');
+  const handleImportComplete = (result) => {
+    let count = 0;
+    if (typeof result === 'number') {
+      count = result;
+    } else if (result && typeof result === 'object') {
+      count = result.count || result.leads?.length || 0;
+      if (result.leads && result.leads.length > 0) {
+        setLeads(prev => [...result.leads, ...prev]);
+        setSelectedLead(result.leads[0]);
+      }
+      if (result.detectedColumns && result.detectedColumns.length > 0) {
+        setTableColumns(prev => {
+          const existingIds = new Set(prev.map(c => c.id.toLowerCase()));
+          const newCols = [];
+          result.detectedColumns.forEach(col => {
+            if (!existingIds.has(col.id.toLowerCase())) {
+              newCols.push(col);
+              existingIds.add(col.id.toLowerCase());
+            }
+          });
+          return [...prev, ...newCols];
+        });
+      }
+    }
+    showToast(`Successfully imported ${count} leads with dynamic attributes!`, 'success');
     setCurrentScreen('leads');
   };
 
@@ -184,6 +250,9 @@ export default function App() {
             {currentScreen === 'leads' && (
               <LeadsScreen
                 leads={leads}
+                columns={tableColumns}
+                onUpdateColumns={setTableColumns}
+                onAddColumn={handleAddColumn}
                 onSelectLead={handleSelectLead}
                 onOpenAddLeadModal={() => setIsAddLeadModalOpen(true)}
                 onTriggerAction={handleTriggerAction}

@@ -29,6 +29,8 @@ export const ImportDataScreen = ({ onImportComplete }) => {
     missingBudgets: 0,
     qualityScore: 94
   });
+  const [parsedLeads, setParsedLeads] = useState([]);
+  const [detectedCustomCols, setDetectedCustomCols] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -45,6 +47,7 @@ export const ImportDataScreen = ({ onImportComplete }) => {
         "Company Size": 320,
         "Source": "Inbound Demo",
         "Deal Value": "$85,000",
+        "Country": "United States",
         "Priority": "HIGH",
         "Status": "Qualified"
       },
@@ -57,6 +60,7 @@ export const ImportDataScreen = ({ onImportComplete }) => {
         "Company Size": 1100,
         "Source": "Partner Referral",
         "Deal Value": "$140,000",
+        "Country": "United Kingdom",
         "Priority": "VERY HIGH",
         "Status": "Demo Scheduled"
       },
@@ -69,6 +73,7 @@ export const ImportDataScreen = ({ onImportComplete }) => {
         "Company Size": 450,
         "Source": "Webinar Attendee",
         "Deal Value": "$62,000",
+        "Country": "Sweden",
         "Priority": "MEDIUM",
         "Status": "Contacted"
       }
@@ -83,10 +88,10 @@ export const ImportDataScreen = ({ onImportComplete }) => {
   // Generate and download sample CSV (.csv) template
   const handleDownloadCsvTemplate = (e) => {
     e?.stopPropagation();
-    const csvContent = "Lead Name,Email,Company,Role,Industry,Company Size,Source,Deal Value,Priority,Status\n" +
-      "Priya Patel,priya.patel@fintechscale.io,FintechScale Inc,VP of Revenue Operations,Fintech,320,Inbound Demo,$85000,HIGH,Qualified\n" +
-      "Marcus Vance,m.vance@cloudhyper.com,CloudHyper Systems,Chief Technology Officer,Cloud Infrastructure,1100,Partner Referral,$140000,VERY HIGH,Demo Scheduled\n" +
-      "Elena Rostova,elena.r@nordicsecurity.com,Nordic Security,Director of Information Security,Cybersecurity,450,Webinar Attendee,$62000,MEDIUM,Contacted";
+    const csvContent = "Lead Name,Email,Company,Role,Industry,Company Size,Source,Deal Value,Country,Priority,Status\n" +
+      "Priya Patel,priya.patel@fintechscale.io,FintechScale Inc,VP of Revenue Operations,Fintech,320,Inbound Demo,$85000,United States,HIGH,Qualified\n" +
+      "Marcus Vance,m.vance@cloudhyper.com,CloudHyper Systems,Chief Technology Officer,Cloud Infrastructure,1100,Partner Referral,$140000,United Kingdom,VERY HIGH,Demo Scheduled\n" +
+      "Elena Rostova,elena.r@nordicsecurity.com,Nordic Security,Director of Information Security,Cybersecurity,450,Webinar Attendee,$62000,Sweden,MEDIUM,Contacted";
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -143,11 +148,63 @@ export const ImportDataScreen = ({ onImportComplete }) => {
           } else if (email) {
             emailsSeen.add(email);
           }
-          const budget = row['Deal Value'] || row['deal value'] || row['Budget'] || row['budget'];
+          const budget = row['Deal Value'] || row['deal value'] || row['Budget'] || row['budget'] || row['ARR'] || row['arr'];
           if (!budget) missingBudget++;
         });
 
         const quality = Math.max(72, Math.min(99, 100 - Math.round((dupes * 2 + missingBudget * 1.5))));
+
+        // Core standard column identifiers
+        const coreColKeys = new Set(['name', 'leadname', 'fullname', 'email', 'company', 'industry', 'source', 'probability', 'propensity', 'priority', 'status', 'lasttouch', 'lastcontact', 'nextaction']);
+
+        // Normalize rows and retain all custom attributes
+        const normalized = jsonRows.map((row, idx) => {
+          const rawName = row['Lead Name'] || row['name'] || row['Name'] || row['Full Name'] || `Prospect #${idx + 1}`;
+          const rawEmail = row['Email'] || row['email'] || `${rawName.toLowerCase().replace(/[^a-z0-9]/g, '.')}@prospects.io`;
+          const rawCompany = row['Company'] || row['company'] || row['Organization'] || 'Global Enterprise';
+          const rawIndustry = row['Industry'] || row['industry'] || 'Technology';
+          const rawSource = row['Source'] || row['source'] || 'Spreadsheet Upload';
+          const rawScore = Number(row['Propensity'] || row['Probability'] || row['score'] || row['probability']) || (Math.floor(Math.random() * 25) + 72);
+          const rawPriority = (row['Priority'] || row['priority'] || (rawScore >= 80 ? 'HIGH' : 'MEDIUM')).toUpperCase();
+          const rawStatus = row['Status'] || row['status'] || 'Qualified';
+          const rawContact = row['Last Touch'] || row['Last Contact'] || row['lastContact'] || 'Just uploaded';
+          const rawAction = row['Next Action'] || row['nextAction'] || 'Schedule Discovery Call';
+
+          return {
+            id: `imported-${Date.now()}-${idx}`,
+            name: rawName,
+            email: rawEmail,
+            company: rawCompany,
+            industry: rawIndustry,
+            source: rawSource,
+            probability: rawScore,
+            priority: rawPriority,
+            status: rawStatus,
+            lastContact: rawContact,
+            nextAction: rawAction,
+            ...row // Retain all original attributes e.g. "Deal Value", "Role", "Country", "Company Size"
+          };
+        });
+
+        // Detect all custom dynamic columns
+        const detectedCols = [];
+        headers.forEach(h => {
+          const cleanKey = h.toLowerCase().trim().replace(/[\s_-]+/g, '');
+          if (!coreColKeys.has(cleanKey) && cleanKey !== 'id') {
+            const colId = h.toLowerCase().trim().replace(/\s+/g, '_');
+            detectedCols.push({
+              id: colId,
+              label: h,
+              visible: true,
+              sortable: true,
+              isCore: false,
+              isCustom: true
+            });
+          }
+        });
+
+        setParsedLeads(normalized);
+        setDetectedCustomCols(detectedCols);
 
         setFileInfo({
           name: file.name,
@@ -157,7 +214,7 @@ export const ImportDataScreen = ({ onImportComplete }) => {
           rowCount: jsonRows.length
         });
 
-        setColumnHeaders(headers.slice(0, 7));
+        setColumnHeaders(headers);
         setPreviewRows(jsonRows.slice(0, 8));
         setImportStats({
           totalRows: jsonRows.length,
@@ -187,30 +244,59 @@ export const ImportDataScreen = ({ onImportComplete }) => {
     reader.readAsArrayBuffer(file);
   };
 
-  // Demo Fallback / Instant Sample Loader
+  // Demo Fallback / Instant Sample Loader with dynamic fields
   const handleLoadDemoDataset = () => {
     setIsProcessing(true);
     setTimeout(() => {
+      const demoRows = [
+        { 'Lead Name': 'Priya Patel', 'Company': 'FintechScale Inc', 'Email': 'priya.patel@fintechscale.io', 'Role': 'VP Operations', 'Industry': 'Fintech', 'Deal Value': '$85,000', 'Country': 'United States', 'Company Size': '320', 'Priority': 'HIGH', 'Status': 'Qualified', 'Source': 'Inbound Demo' },
+        { 'Lead Name': 'Marcus Vance', 'Company': 'CloudHyper Systems', 'Email': 'm.vance@cloudhyper.com', 'Role': 'CTO', 'Industry': 'Cloud', 'Deal Value': '$140,000', 'Country': 'United Kingdom', 'Company Size': '1,100', 'Priority': 'VERY HIGH', 'Status': 'Demo Scheduled', 'Source': 'Partner Referral' },
+        { 'Lead Name': 'Elena Rostova', 'Company': 'Nordic Security', 'Email': 'elena.r@nordicsecurity.com', 'Role': 'CISO', 'Industry': 'Cybersecurity', 'Deal Value': '$62,000', 'Country': 'Sweden', 'Company Size': '450', 'Priority': 'MEDIUM', 'Status': 'Contacted', 'Source': 'Webinar' },
+        { 'Lead Name': 'Ananya Verma', 'Company': 'DataPulse AI', 'Email': 'ananya.v@datapulse.ai', 'Role': 'Head of AI', 'Industry': 'SaaS', 'Deal Value': '$95,000', 'Country': 'India', 'Company Size': '240', 'Priority': 'VERY HIGH', 'Status': 'Proposal Sent', 'Source': 'Organic Search' },
+        { 'Lead Name': 'Liam O’Connor', 'Company': 'Vertex Logix', 'Email': 'liam.oc@vertexlogix.com', 'Role': 'VP Sales Ops', 'Industry': 'Logistics', 'Deal Value': '$78,000', 'Country': 'Ireland', 'Company Size': '850', 'Priority': 'HIGH', 'Status': 'Discovery Call', 'Source': 'LinkedIn' },
+        { 'Lead Name': 'Sophie Dubois', 'Company': 'Nexora Bio', 'Email': 's.dubois@nexora.bio', 'Role': 'Director of BD', 'Industry': 'Healthcare', 'Deal Value': '$115,000', 'Country': 'France', 'Company Size': '520', 'Priority': 'HIGH', 'Status': 'Qualified', 'Source': 'Partner Referral' },
+        { 'Lead Name': 'Kenji Sato', 'Company': 'OmniRobotics', 'Email': 'k.sato@omnirobotics.jp', 'Role': 'Managing Director', 'Industry': 'Robotics', 'Deal Value': '$210,000', 'Country': 'Japan', 'Company Size': '1,800', 'Priority': 'VERY HIGH', 'Status': 'Evaluation', 'Source': 'Direct Outreach' }
+      ];
+
+      const detected = [
+        { id: 'role', label: 'Role', visible: true, sortable: true, isCore: false, isCustom: true },
+        { id: 'deal_value', label: 'Deal Value', visible: true, sortable: true, isCore: false, isCustom: true },
+        { id: 'country', label: 'Country', visible: true, sortable: true, isCore: false, isCustom: true },
+        { id: 'company_size', label: 'Company Size', visible: true, sortable: true, isCore: false, isCustom: true }
+      ];
+
+      const normalized = demoRows.map((row, idx) => ({
+        id: `demo-${Date.now()}-${idx}`,
+        name: row['Lead Name'],
+        email: row['Email'],
+        company: row['Company'],
+        industry: row['Industry'],
+        source: row['Source'],
+        probability: Math.floor(Math.random() * 20) + 78,
+        priority: row['Priority'],
+        status: row['Status'],
+        lastContact: 'Recent',
+        nextAction: 'Review Proposal',
+        ...row
+      }));
+
+      setParsedLeads(normalized);
+      setDetectedCustomCols(detected);
+
       setFileInfo({
         name: 'Q3_Global_Enterprise_Leads.xlsx',
         size: '1.45 MB',
         type: 'Excel (.xlsx)',
         sheetName: 'Active Pipeline 2026',
-        rowCount: 450
+        rowCount: demoRows.length
       });
-      setColumnHeaders(['Lead Name', 'Company', 'Email', 'Role', 'Industry', 'Deal Value', 'Priority']);
-      setPreviewRows([
-        { 'Lead Name': 'Priya Patel', 'Company': 'FintechScale Inc', 'Email': 'priya.patel@fintechscale.io', 'Role': 'VP Operations', 'Industry': 'Fintech', 'Deal Value': '$85,000', 'Priority': 'HIGH' },
-        { 'Lead Name': 'Marcus Vance', 'Company': 'CloudHyper Systems', 'Email': 'm.vance@cloudhyper.com', 'Role': 'CTO', 'Industry': 'Cloud', 'Deal Value': '$140,000', 'Priority': 'VERY HIGH' },
-        { 'Lead Name': 'Elena Rostova', 'Company': 'Nordic Security', 'Email': 'elena.r@nordicsecurity.com', 'Role': 'CISO', 'Industry': 'Cybersecurity', 'Deal Value': '$62,000', 'Priority': 'MEDIUM' },
-        { 'Lead Name': 'Ananya Verma', 'Company': 'DataPulse AI', 'Email': 'ananya.v@datapulse.ai', 'Role': 'Head of AI', 'Industry': 'SaaS', 'Deal Value': '$95,000', 'Priority': 'VERY HIGH' },
-        { 'Lead Name': 'Liam O’Connor', 'Company': 'Vertex Logix', 'Email': 'liam.oc@vertexlogix.com', 'Role': 'VP Sales', 'Industry': 'Logistics', 'Deal Value': '$78,000', 'Priority': 'HIGH' }
-      ]);
+      setColumnHeaders(Object.keys(demoRows[0]));
+      setPreviewRows(demoRows);
       setImportStats({
-        totalRows: 450,
-        duplicates: 8,
-        missingBudgets: 4,
-        qualityScore: 96
+        totalRows: demoRows.length,
+        duplicates: 0,
+        missingBudgets: 0,
+        qualityScore: 98
       });
       setIsProcessing(false);
       setFileUploaded(true);
@@ -221,8 +307,12 @@ export const ImportDataScreen = ({ onImportComplete }) => {
   const handleFinalImport = () => {
     setCurrentStep(4);
     setTimeout(() => {
-      onImportComplete?.(fileInfo?.rowCount || 450);
-    }, 1200);
+      onImportComplete?.({
+        count: parsedLeads.length || fileInfo?.rowCount || 450,
+        leads: parsedLeads,
+        detectedColumns: detectedCustomCols
+      });
+    }, 1000);
   };
 
   return (
@@ -527,6 +617,59 @@ export const ImportDataScreen = ({ onImportComplete }) => {
                 </div>
               </div>
             </div>
+
+            {/* Detected Dynamic Attributes Pill Showcase */}
+            {detectedCustomCols.length > 0 && (
+              <div style={{
+                background: 'rgba(2, 132, 199, 0.07)',
+                border: '1px solid rgba(2, 132, 199, 0.28)',
+                borderRadius: 'var(--radius-md)',
+                padding: '1rem 1.25rem',
+                marginBottom: '1.25rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', flexWrap: 'wrap' }}>
+                  <Sparkles size={16} color="var(--accent-primary)" />
+                  <span style={{ fontSize: '0.875rem', fontWeight: '800', color: 'var(--text-main)' }}>
+                    ✨ Detected Dynamic Columns ({detectedCustomCols.length}):
+                  </span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    These custom entity attributes will be automatically registered into your pipeline table.
+                  </span>
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+                  {detectedCustomCols.map((col, cIdx) => (
+                    <span
+                      key={cIdx}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '0.4rem',
+                        padding: '0.25rem 0.65rem',
+                        borderRadius: '9999px',
+                        background: 'var(--bg-surface)',
+                        border: '1px solid var(--border-medium)',
+                        fontSize: '0.75rem',
+                        fontWeight: '700',
+                        color: 'var(--text-main)',
+                        boxShadow: 'var(--shadow-sm)'
+                      }}
+                    >
+                      <span>{col.label}</span>
+                      <span style={{
+                        fontSize: '0.65rem',
+                        color: 'var(--accent-primary)',
+                        background: 'rgba(2, 132, 199, 0.1)',
+                        padding: '0.1rem 0.35rem',
+                        borderRadius: '4px',
+                        fontWeight: '800'
+                      }}>
+                        Custom Field
+                      </span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* Interactive Data Preview Table */}
             <div style={{ marginBottom: '1.5rem' }}>
