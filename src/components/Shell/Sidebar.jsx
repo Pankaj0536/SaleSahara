@@ -27,6 +27,7 @@ export const Sidebar = ({ currentScreen, onNavigate, onLogout, isOpenMobile, onC
     { id: 'data-quality', label: 'Data Quality', icon: CheckCircle, badge: '87%' },
     { id: 'model-intelligence', label: 'Model Intelligence', icon: BrainCircuit, badge: 'Healthy' },
     { id: 'import', label: 'Import Data', icon: UploadCloud },
+    { id: 'ai-assistant', label: 'AI Assistant', icon: Bot, isNew: true },
     { id: 'settings', label: 'Settings', icon: Settings }
   ];
 
